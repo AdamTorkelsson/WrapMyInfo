@@ -1,9 +1,17 @@
 #!/usr/bin/env node
-//var app = require("app/init");
-//var config = require("config");
+var config = require("./../config");
+var app = require("./init");
 
 console.log("Hello World!");
 
 // Logging
 
 // Listen for connections
+app.listen(config.express.port, config.express.ip, function (error) {
+    if (error) {
+        console.log("Unable to listen for connections", error);
+        process.exit(10);
+    }
+    console.log("express is listening on http://" +
+        config.express.ip + ":" + config.express.port);
+});
