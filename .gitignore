@@ -29,3 +29,5 @@ node_modules
 # Other
 config.js
 .vagrant/
+.idea/
+.env

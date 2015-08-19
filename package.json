@@ -14,7 +14,9 @@
   "dependencies": {
     "express": "4.x",
     "jade": "1.9.x",
-    "pg": "4.x"
+    "pg": "4.x",
+    "body-parser": "~1.0.1",
+    "dotenv": "~1.2"
   },
   "devDependencies": {
     "bistre": "1.0.1"

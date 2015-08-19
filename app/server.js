@@ -2,8 +2,6 @@
 var config = require("./../config");
 var app = require("./init");
 
-console.log("Hello World!");
-
 // Logging
 
 // Listen for connections
