@@ -8,6 +8,7 @@ require('dotenv').load();
 
 // Init app
 var app = require("./init");
+var models = require("./models");
 
 // Start logging
 
