@@ -7,8 +7,7 @@ var router = require("express").Router();
 var getAbout = function(req, res){
     var response = {
         'name': 'WrapMyInfo',
-        'repoURL': 'https://github.com/AdamTorkelsson/WrapMyInfo',
-        'website' : 'http://www.wrapmyinfo.com/'
+        'repoURL': 'https://github.com/AdamTorkelsson/WrapMyInfo'
     };
     res.json(response);
 };
