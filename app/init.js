@@ -1,6 +1,7 @@
 var express = require("express");
 var Sequelize = require('sequelize');
 var bodyParser = require('body-parser');
+var forceSSL = require('express-force-ssl');
 
 // Get app instance
 var app = express();
@@ -19,6 +20,9 @@ var sequelize = new Sequelize(process.env.DB_HOST, process.env.DB_USER, process.
 // Enable plugins
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+if(process.env.TLS_ENABLE === 'true'){
+    app.use(forceSSL);
+}
 
 // View configuration
 //app.set("views", __dirname);

@@ -21,8 +21,8 @@ inSecureServer.listen(process.env.APP_PORT, process.env.APP_HOST, function(error
     console.log("express is listening on http://" + process.env.APP_HOST + ":" + process.env.APP_PORT);
 });
 
-// Start secure server if not on a dev environment, and both private key and certificates is provided
-if(process.env.APP_ENV !== 'dev' && process.env.TLS_PRIVATE_KEY !== '' && process.env.TLS_CERTIFICATE !== ''){
+// Start secure server if enabled
+if(process.env.TLS_ENABLE === 'true'){
     // Load TLS private key and certificate
     var tlsOptions = {
         key: fs.readFileSync(process.env.TLS_PRIVATE_KEY),
