@@ -6,22 +6,22 @@
     "start": "node app/server.js",
     "test": "./bin/test.sh",
     "lint": "./bin/lint.sh",
-    "migrate": "node bin/migrate.js"
+    "build": "node bin/build.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/AdamTorkelsson/WrapMyInfo.git"
   },
   "dependencies": {
+    "body-parser": "~1.0.1",
+    "dotenv": "~1.2",
     "express": "4.x",
+    "express-force-ssl": "~0.2",
     "jade": "1.9.x",
     "pg": "4.x",
     "pg-hstore": "~2.3",
     "sequelize": "~3.5",
-    "umzug": "1.6",
-    "body-parser": "~1.0.1",
-    "dotenv": "~1.2",
-    "express-force-ssl": "~0.2"
+    "sequelize-cli": "~1.7"
   },
   "devDependencies": {
     "bistre": "1.0.1"
