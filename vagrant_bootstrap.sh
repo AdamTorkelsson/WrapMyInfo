@@ -39,4 +39,9 @@ CREATE DATABASE wrapmyinfo WITH OWNER=wrapmyinfo
                                   TEMPLATE=template0;
 EOF
 
+echo "--- Add aliases to simplify development ---"
+echo "alias wrapmyinfo-migrate='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+echo "alias wrapmyinfo-create-migration='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize migration:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+echo "alias wrapmyinfo-create-model='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize model:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+
 echo "--- Done ---"

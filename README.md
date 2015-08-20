@@ -44,6 +44,19 @@ These are the main resources:
 In the backend an easy way to access logs and get an overview of how users has accessed data will be included, all access to the stored data will be logged.
 
 ---
+# Get started
+To get up and running fast, use vagrantup.com
+1. git clone git@github.com:AdamTorkelsson/WrapMyInfo.git && cd wrapmyinfo
+2. vagrant up
+3. vagrant ssh
+4. cd /home/vagrant/wrapmyinfo
+5. cp .env.vagrant .env
+6. npm install
+7. npm build
+8. wrapmyinfo-migrate
+9. npm start
+
+---
 # API Documentation
 This will be further developed as the software functionality grows! 
 
