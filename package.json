@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node app/server.js",
     "test": "./bin/test.sh",
-    "lint": "./bin/lint.sh"
+    "lint": "./bin/lint.sh",
+    "migrate": "node bin/migrate.js"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,9 @@
     "express": "4.x",
     "jade": "1.9.x",
     "pg": "4.x",
+    "pg-hstore": "~2.3",
+    "sequelize": "~3.5",
+    "umzug": "1.6",
     "body-parser": "~1.0.1",
     "dotenv": "~1.2"
   },

@@ -4,7 +4,7 @@
 var router = require("express").Router();
 
 // Functions
-var about = function(req, res){
+var getAbout = function(req, res){
     var response = {
         'name': 'WrapMyInfo',
         'repoURL': 'https://github.com/AdamTorkelsson/WrapMyInfo',
@@ -14,6 +14,6 @@ var about = function(req, res){
 };
 
 // Binding routes
-router.get('/about', about);
+router.get('/', getAbout);
 
 module.exports = router;
