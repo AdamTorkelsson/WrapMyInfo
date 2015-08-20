@@ -27,9 +27,16 @@ echo "--- Download Node.js Dependencies ---"
 npm install
 
 echo "--- Init database ---"
-sudo -u postgres createdb wrapmyinfo
+cat << EOF | sudo -u postgres psql
+-- Create the database user:
+CREATE USER wrapmyinfo WITH PASSWORD 'wrapmyinfo';
 
-echo "--- Launch application ---"
-npm start
+-- Create the database:
+CREATE DATABASE wrapmyinfo WITH OWNER=wrapmyinfo
+                                  LC_COLLATE='en_US.utf8'
+                                  LC_CTYPE='en_US.utf8'
+                                  ENCODING='UTF8'
+                                  TEMPLATE=template0;
+EOF
 
-echo "Done"
+echo "--- Done ---"

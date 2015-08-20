@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder ".", "/home/vagrant/wrapmyinfo", :mount_options => ["dmode=777", "fmode=666"]
 
     config.vm.provision :shell, :path => "vagrant_bootstrap.sh"
-    config.vm.network :forwarded_port, guest: 80, host: 8080
+    config.vm.network :forwarded_port, guest: 8081, host: 8081
 
 
 end
