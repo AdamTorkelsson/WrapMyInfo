@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-var config = require("./../config");
+// Load environment variables
+require('dotenv').load();
+
+// Init app
 var app = require("./init");
 
-// Logging
+// Start logging
 
 // Listen for connections
-app.listen(config.express.port, config.express.ip, function (error) {
+app.listen(process.env.APP_PORT, process.env.APP_HOST, function (error) {
     if (error) {
         console.log("Unable to listen for connections", error);
         process.exit(10);
     }
-    console.log("express is listening on http://" +
-        config.express.ip + ":" + config.express.port);
+    console.log("express is listening on http://" + process.env.APP_HOST + ":" + process.env.APP_PORT);
 });
