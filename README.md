@@ -46,6 +46,7 @@ In the backend an easy way to access logs and get an overview of how users has a
 ---
 # Get started
 To get up and running fast, use vagrantup.com
+
 1. git clone git@github.com:AdamTorkelsson/WrapMyInfo.git && cd wrapmyinfo
 2. vagrant up
 3. vagrant ssh
