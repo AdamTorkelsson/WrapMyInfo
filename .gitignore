@@ -31,3 +31,4 @@ config/
 .vagrant/
 .idea/
 .env
+.DS_Store
