@@ -24,7 +24,7 @@ echo "--- cd into /home/vagrant/wrapmyinfo ---"
 cd /home/vagrant/wrapmyinfo
 
 echo "--- Download Node.js Dependencies ---"
-npm install
+sudo npm install
 
 echo "--- Init database ---"
 cat << EOF | sudo -u postgres psql
@@ -47,5 +47,10 @@ echo "alias wrapmyinfo-create-model='nodejs /home/vagrant/wrapmyinfo/node_module
 echo "--- Configure environment variables ---"
 [ ! -f /home/vagrant/wrapmyinfo/.env ] && cp /home/vagrant/wrapmyinfo/.env.vagrant /home/vagrant/wrapmyinfo/.env.vagrant
 nodejs /home/vagrant/wrapmyinfo/bin/build.js
+
+echo "--- Generate SSL/TLS key and cert ---"
+mkdir tls
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /home/vagrant/wrapmyinfo/tls/private.key -out /home/vagrant/wrapmyinfo/tls/certificate.crt \
+    -subj /C=SE/ST=Göteborg/O=WrapMyInfo/localityName=Göteborg/commonName=127.0.0.1/organizationalUnitName=WrapMyInfo/emailAddress=adam@wrapmyinfo.com
 
 echo "--- Done ---"

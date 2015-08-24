@@ -9,8 +9,8 @@ var app = express();
 // Enable plugins
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-if(process.env.TLS_ENABLE === 'true'){
-    app.use(forceSSL);
+if(process.env.TLS_ENABLE === 'true' && process.env.APP_ENV !== 'dev'){
+    //app.use(forceSSL); Disabled until SSL is working properly
 }
 
 // View configuration

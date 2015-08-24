@@ -26,8 +26,8 @@ inSecureServer.listen(process.env.APP_PORT, process.env.APP_HOST, function(error
 if(process.env.TLS_ENABLE === 'true'){
     // Load TLS private key and certificate
     var tlsOptions = {
-        key: fs.readFileSync(process.env.TLS_PRIVATE_KEY),
-        cert: fs.readFileSync(process.env.TLS_CERTIFICATE)
+        key: fs.readFileSync(__dirname + '/' + process.env.TLS_PRIVATE_KEY),
+        cert: fs.readFileSync(__dirname + '/' + process.env.TLS_CERTIFICATE)
     };
 
     // Create server
