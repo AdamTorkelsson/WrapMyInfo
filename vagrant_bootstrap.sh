@@ -9,11 +9,15 @@ sudo apt-get install -y python-software-properties
 echo "--- Add Node.js to known repos ---"
 sudo add-apt-repository -y ppa:chris-lea/node.js
 
+echo "--- Add PostgreSQL repo and key ---"
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+
 echo "--- Updating packages list ---"
 sudo apt-get update
 
 echo "--- Installing dependencies ---"
-sudo apt-get install -y nodejs git-core wget curl postgresql postgresql-contrib screen
+sudo apt-get install -y nodejs git-core wget curl postgresql-9.4 postgresql-contrib-9.4 screen
 
 echo "--- Install Bower, less compiler and supervisor ---"
 #sudo npm install -g bower
@@ -41,6 +45,8 @@ EOF
 
 echo "--- Add aliases to simplify development ---"
 echo "alias wrapmyinfo-migrate='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+echo "alias wrapmyinfo-migrate-rollback='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate:undo --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+echo "alias wrapmyinfo-migrate-rollbackall='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate:undo:all --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
 echo "alias wrapmyinfo-create-migration='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize migration:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
 echo "alias wrapmyinfo-create-model='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize model:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
 
