@@ -9,6 +9,11 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Schema.belongsTo(models.Developer);
+        Schema.belongsToMany(models.Group, {
+          as: 'SchemaGroup',
+          through: models.GroupSchema,
+          foreignKey: 'groupId'
+        });
       }
     },
     paranoid: true,

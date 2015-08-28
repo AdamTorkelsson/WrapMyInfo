@@ -1,12 +1,11 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var UserMemberGroup = sequelize.define('UserMemberGroup', {
-    userId: DataTypes.STRING,
-    groupId: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
-        // associations can be defined here
+        UserMemberGroup.belongsTo(models.User);
+        UserMemberGroup.belongsTo(models.Group);
       }
     },
     paranoid: true,
