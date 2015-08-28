@@ -91,6 +91,7 @@ var getSchemaInstance = function(req, res){
 
 var putSchemaInstance = function(req, res){
     verifySchemaInstance(req, function(schemaInstance){
+        //TODO: Verify structure against Schema, and replace if it matches.
         schemaInstance.json = req.body.json;
         schemaInstance.meta = req.body.meta;
         schemaInstance.save().then(function(savedSchemaInstance){
@@ -190,6 +191,40 @@ var deleteBlob = function(req, res){
     });
 };
 
+var getOwnerGroups = function(req, res){
+    //TODO: Implement
+};
+
+var postOwnerGroups = function(req, res){
+    //TODO: Implement
+};
+
+var putOwnerGroup = function(req, res){
+    //TODO: Implement
+};
+
+var deleteOwnerGroup = function(req, res){
+    //TODO: Implement
+};
+
+var getMemberGroups = function(req, res){
+    models.User.findById(req.params.user).then(function(user){ //TODO: Eager load MemberGroups
+        res.json(user); //TODO: Only return the array of Groups
+    });
+};
+
+var postMemberGroups = function(req, res){
+    //TODO: Implement
+};
+
+var putMemberGroup = function(req, res){
+    //TODO: Implement
+};
+
+var deleteMemberGroup = function(req, res){
+    //TODO: Implement
+};
+
 // Routes
 
 router.get('/', getUsers); // Get Users belonging to a Developer
@@ -210,5 +245,17 @@ router.post('/:user/schemas/:schema/schemainstances/:instance/blobs', postBlob);
 router.get('/:user/schemas/:schema/schemainstances/:instance/blobs/:blob', getBlob);
 router.put('/:user/schemas/:schema/schemainstances/:instance/blobs/:blob', putBlob);
 router.delete('/:user/schemas/:schema/schemainstances/:instance/blobs/:blob', deleteBlob);
+
+router.get('/:user/ownergroups/', getOwnerGroups);
+router.post('/:user/ownergroups/', postOwnerGroups);
+
+router.put('/:user/ownergroups/:group', putOwnerGroup);
+router.delete('/:user/ownergroups/:group', deleteOwnerGroup);
+
+router.get('/:user/membergroups/', getMemberGroups);
+router.post('/:user/membergroups/', postMemberGroups);
+
+router.put('/:user/membergroups/:group', putMemberGroup);
+router.delete('/:user/membergroups/:group', deleteMemberGroup);
 
 module.exports = router;

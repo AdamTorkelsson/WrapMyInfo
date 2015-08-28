@@ -18,8 +18,11 @@ if(process.env.TLS_ENABLE === 'true' && process.env.APP_ENV !== 'dev'){
 app.set("view engine", "jade");
 
 // Bind routers to resources
-app.use('/', require("./routes/static.router"));
 app.use('/users', require('./routes/user.router'));
+app.use('/schemas', require('./routes/schema.router'));
+app.use('/groups', require('./routes/group.router'));
+app.use('/auth', require('./routes/auth.router'));
+app.use('/', require("./routes/static.router"));
 
 // Bind errorhandlers
 app.use(require("./routes/notFound.404"));
