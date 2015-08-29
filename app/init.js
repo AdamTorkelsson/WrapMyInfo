@@ -5,7 +5,6 @@ var forceSSL = require('express-force-ssl');
 // Get app instance
 var app = express();
 
-
 // Enable Middleware
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());

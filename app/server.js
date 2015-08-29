@@ -2,6 +2,8 @@
 var fs = require('fs');
 var http = require('http');
 var https = require('https');
+var sprintf = require("sprintf-js").sprintf;
+var wrapMyInfo = require('../package.json');
 
 // Load environment variables
 require('dotenv').load();
@@ -19,7 +21,8 @@ inSecureServer.listen(process.env.APP_PORT, process.env.APP_HOST, function(error
         console.log("Unable to listen for connections", error);
         process.exit(10);
     }
-    console.log("express is listening on http://" + process.env.APP_HOST + ":" + process.env.APP_PORT);
+    var text = sprintf("%s %s on %s is listening on http://%s:%s", wrapMyInfo.name, wrapMyInfo.version, process.env.APP_ENV, process.env.APP_HOST, process.env.APP_PORT);
+    console.log(text);
 });
 
 // Start secure server if enabled
@@ -39,6 +42,7 @@ if(process.env.TLS_ENABLE === 'true'){
             console.log("Unable to listen for connections", error);
             process.exit(10);
         }
-        console.log("express is listening on https://" + process.env.APP_HOST + ":" + process.env.APP_PORT_TLS);
+        var text = sprintf("%s %s on %s is listening for secure connections via port %s.", wrapMyInfo.name, wrapMyInfo.version, process.env.APP_ENV, process.env.APP_PORT_TLS);
+        console.log(text);
     });
 }

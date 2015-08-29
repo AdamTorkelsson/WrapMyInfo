@@ -21,7 +21,8 @@
     "pg": "4.x",
     "pg-hstore": "~2.3",
     "sequelize": "~3.5",
-    "sequelize-cli": "~1.7"
+    "sequelize-cli": "~1.7",
+    "sprintf-js": "^1.0.3"
   },
   "devDependencies": {
     "bistre": "1.0.1"
