@@ -8,10 +8,10 @@ module.exports = {
         autoIncrement: true,
         type: Sequelize.INTEGER
       },
-      SchemaInstanceId: {
+      DocumentId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'SchemaInstances'
+          model: 'Documents'
         }
       },
       meta: {

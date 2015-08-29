@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('SchemaInstances', {
+    return queryInterface.createTable('Documents', {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -23,7 +23,7 @@ module.exports = {
       meta: {
         type: Sequelize.JSON
       },
-      json: {
+      data: {
         type: Sequelize.JSON
       },
       createdAt: {
@@ -40,6 +40,6 @@ module.exports = {
     });
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('SchemaInstances');
+    return queryInterface.dropTable('Documents');
   }
 };

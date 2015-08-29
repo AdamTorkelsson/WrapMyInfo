@@ -2,16 +2,16 @@ var models = require("../../app/models");
 var utils = require('../../app/utils/utils');
 
 var obj = {};
-obj.name = 'Schema Instance seeder';
+obj.name = 'Document seeder';
 
 obj.seed = function(){
-    models.SchemaInstance.create({
+    models.Document.create({
         SchemaId: 1,
         UserId: 1,
         meta: {
             meta: 'Hello'
         },
-        json: {
+        data: {
             json: 'True dat'
         }
     }).then(function(){

@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.SchemaInstance);
+        User.hasMany(models.Document);
         User.belongsTo(models.Developer);
         User.belongsToMany(models.Group, {
           as: 'OwnerGroup',

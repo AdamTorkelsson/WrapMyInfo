@@ -17,7 +17,7 @@ module.exports = {
           model: 'Developers'
         }
       },
-      json: {
+      dataRules: {
         type: Sequelize.JSON
       },
       maxBlobs: {

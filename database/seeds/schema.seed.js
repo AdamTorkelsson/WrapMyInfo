@@ -9,7 +9,7 @@ obj.seed = function(){
         models.Schema.create({
             name: 'Test',
             DeveloperId: developers[0].id,
-            json: {
+            dataRules: {
                 hello: 'Debug'
             },
             maxBlobs: 5,

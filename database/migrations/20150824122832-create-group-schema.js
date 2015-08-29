@@ -2,16 +2,20 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('GroupSchemas', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
       GroupId: {
         type: Sequelize.INTEGER,
-        primaryKey: true,
         references: {
           model: 'Groups'
         }
       },
       SchemaId: {
         type: Sequelize.INTEGER,
-        primaryKey: true,
         references: {
           model: 'Schemas'
         }

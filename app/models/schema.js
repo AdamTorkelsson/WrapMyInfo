@@ -2,7 +2,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Schema = sequelize.define('Schema', {
     name: DataTypes.STRING,
-    json: DataTypes.JSON,
+    dataRules: DataTypes.JSON,
     maxBlobs: DataTypes.INTEGER,
     maxBlobSize: DataTypes.INTEGER
   }, {

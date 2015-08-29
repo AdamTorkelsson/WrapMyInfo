@@ -1,16 +1,18 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Blob = sequelize.define('Blob', {
+  var Document = sequelize.define('Document', {
     meta: DataTypes.JSON,
-    blob: DataTypes.BLOB
+    data: DataTypes.JSON
   }, {
     classMethods: {
       associate: function(models) {
-        Blob.belongsTo(models.Document);
+        Document.belongsTo(models.Schema);
+        Document.belongsTo(models.User);
+        Document.hasMany(models.Blob);
       }
     },
     paranoid: true,
     timestamps: true
   });
-  return Blob;
+  return Document;
 };

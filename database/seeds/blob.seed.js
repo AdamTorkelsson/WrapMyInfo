@@ -6,7 +6,7 @@ obj.name = 'Blob seeder';
 
 obj.seed = function(){
     models.Blob.create({
-        SchemaInstanceId: 1,
+        DocumentId: 1,
         meta: {
             hello: 'meta'
         }
