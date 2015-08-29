@@ -1,7 +1,6 @@
+var staticController = {};
 
-var router = require("express").Router();
-
-var home = function(req, res){
+staticController.home = function(req, res){
     var response = {
         'status': 'up',
         'message': 'We are online!'
@@ -9,7 +8,7 @@ var home = function(req, res){
     res.json(response);
 };
 
-var getAbout = function(req, res){
+staticController.getAbout = function(req, res){
     var response = {
         'name': 'WrapMyInfo',
         'repoURL': 'https://github.com/AdamTorkelsson/WrapMyInfo'
@@ -17,8 +16,4 @@ var getAbout = function(req, res){
     res.json(response);
 };
 
-// Binding routes
-router.get('/', home);
-router.get('/about', getAbout)
-
-module.exports = router;
+module.exports = staticController;

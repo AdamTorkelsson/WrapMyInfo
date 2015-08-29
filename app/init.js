@@ -6,7 +6,7 @@ var forceSSL = require('express-force-ssl');
 var app = express();
 
 
-// Enable plugins
+// Enable Middleware
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 if(process.env.TLS_ENABLE === 'true' && process.env.APP_ENV !== 'dev'){
@@ -18,14 +18,10 @@ if(process.env.TLS_ENABLE === 'true' && process.env.APP_ENV !== 'dev'){
 app.set("view engine", "jade");
 
 // Bind routers to resources
-app.use('/users', require('./routes/user.router'));
-app.use('/schemas', require('./routes/schema.router'));
-app.use('/groups', require('./routes/group.router'));
-app.use('/auth', require('./routes/auth.router'));
-app.use('/', require("./routes/static.router"));
+app.use(require('./routes'));
 
 // Bind errorhandlers
-app.use(require("./routes/notFound.404"));
+app.use(require("./controllers/notfound.controller"));
 
 // Export app instance
 module.exports = app;
