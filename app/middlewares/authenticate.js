@@ -29,7 +29,12 @@ module.exports = function(req, res, next){
                             gt: tokenEarliestCreationTime
                         }
                     },
-                    include: [models.User]
+                    include: [
+                        {
+                            model: models.User,
+                            include: [models.Developer]
+                        }
+                    ]
                 }).then(function(userToken){
                     if(userToken){
                         req.authenticated = {
