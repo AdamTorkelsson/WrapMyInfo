@@ -44,20 +44,22 @@ router.delete('/users/:user/membergroups/:group', userController.deleteMemberGro
 
 // Group Controller
 
-router.get('/groups', groupController.getGroups);
-router.post('/groups', groupController.postGroup);
+router.get('/groups', groupController.getGroups); // Get all Groups associated with a Developer
+router.post('/groups', groupController.postGroup); // Create Group
 
 router.get('/groups/:group', groupController.getGroup);
 router.put('/groups/:group', groupController.putGroup);
 router.delete('/groups/:group', groupController.deleteGroup);
 
-router.get('/groups/:group/members', groupController.getGroup);
+router.get('/groups/:group/members', groupController.getGroupMembers);
 
-router.get('/groups/:group/members/:user', groupController.getGroup);
+router.post('/groups/:group/members/:user', groupController.postGroupMember);
+router.delete('/groups/:group/members/:user', groupController.deleteGroupMember);
 
-router.get('/groups/:group/owners', groupController.getGroup);
+router.get('/groups/:group/owners', groupController.getGroupOwners);
 
-router.get('/groups/:group/owners/:user', groupController.getGroup);
+router.post('/groups/:group/owners/:user', groupController.postGroupOwner);
+router.delete('/groups/:group/owners/:user', groupController.deleteGroupOwner);
 
 
 // Schema Controller
@@ -72,8 +74,7 @@ router.delete('/schemas/:schema', schemaController.deleteSchema);
 
 // Auth Controller
 
-router.get('/auth', authController.getTokenDeveloper);
-router.get('/auth/:user', authController.getTokenUser);
+router.get('/auth/:key', authController.getToken);
 
 
 // Static Controller
