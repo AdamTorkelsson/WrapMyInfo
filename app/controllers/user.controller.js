@@ -1,11 +1,12 @@
 var models = require('../models');
-var utils = require("../utils/utils");
+var wmiCrypto = require("../utils/wmi-crypto");
+var errors = require("../utils/errors");
 
 var userController = {};
 // Helpers
 
 var verifyDocument = function(req, func){
-    models.Document.findById(req.params.instance, {
+    models.Document.findById(req.params.document, {
         include: [models.Blob]
     }).then(function(document){
         if(!document){
@@ -25,7 +26,6 @@ var verifyDocument = function(req, func){
 // Controllers
 
 userController.getUsers = function(req, res){
-    // Get developer
     models.User.findAll().then(function(users){
         res.json(users);
     });
@@ -33,7 +33,7 @@ userController.getUsers = function(req, res){
 
 userController.postUser = function(req, res){
     models.User.create({
-        key: utils.createHash(),
+        key: wmiCrypto.createKey(),
         DeveloperId: 1
     }).then(function(user){
         res.json(user);
@@ -49,12 +49,17 @@ userController.getSchemas = function(req, res){
             }
         ]
     }).then(function(user){
-        var schemas = [];
-        for(var i = 0; i < user.Documents.length; i++){
-            var schema = user.Documents[i].Schema;
-            schemas.push(schema);
+        if(user){
+            var schemas = [];
+            for(var i = 0; i < user.Documents.length; i++){
+                var schema = user.Documents[i].Schema;
+                schemas.push(schema);
+            }
+            res.json(schemas);
+        }else{
+            res.json(errors.noResourceFound("User"));
         }
-        res.json(schemas);
+
         //TODO: Make sure no duplicates is delivered
         //TODO: Enable fetching Blobs with req.query.includeBlobs
     });
@@ -77,7 +82,7 @@ userController.postDocument = function(req, res){
         UserId: req.params.user,
         SchemaId: req.params.schema,
         meta: req.body.meta,
-        json: req.body.json
+        data: req.body.data
     }).then(function(document){
         res.json(document);
     });
@@ -92,7 +97,7 @@ userController.getDocument = function(req, res){
 userController.putDocument = function(req, res){
     verifyDocument(req, function(document){
         //TODO: Verify structure against Schema, and replace if it matches.
-        document.json = req.body.json;
+        document.data = req.body.data;
         document.meta = req.body.meta;
         document.save().then(function(savedDocument){
             res.json(savedDocument)
@@ -107,7 +112,6 @@ userController.deleteDocument = function(req, res){
                 status: "success"
             });
         });
-
     });
 };
 

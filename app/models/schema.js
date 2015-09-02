@@ -10,9 +10,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Schema.belongsTo(models.Developer);
         Schema.belongsToMany(models.Group, {
-          as: 'SchemaGroup',
           through: models.GroupSchema,
-          foreignKey: 'groupId'
+          foreignKey: 'SchemaId'
         });
       }
     },

@@ -7,19 +7,18 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Group.belongsTo(models.Developer);
         Group.belongsToMany(models.Schema, {
-          as: 'GroupSchema',
           through: models.GroupSchema,
-          foreignKey: 'groupId'
+          foreignKey: 'GroupId'
         });
         Group.belongsToMany(models.User, {
           as: 'GroupOwner',
           through: models.UserOwnerGroup,
-          foreignKey: 'groupId'
+          foreignKey: 'GroupId'
         });
         Group.belongsToMany(models.User, {
           as: 'GroupMember',
           through: models.UserMemberGroup,
-          foreignKey: 'groupId'
+          foreignKey: 'GroupId'
         });
       }
     },
