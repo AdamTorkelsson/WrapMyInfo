@@ -9,12 +9,12 @@ wmiCrypto.hashForDatabase = function(data){
 
 wmiCrypto.encryptData = function(data){
     //TODO: Implement
-    return data;
+    return 'ENCRYPTED--' + data;
 };
 
 wmiCrypto.decryptData = function(data){
     //TODO: Implement
-    return data;
+    return data.slice(11);
 };
 
 wmiCrypto.createToken = function(){
@@ -22,7 +22,7 @@ wmiCrypto.createToken = function(){
 };
 
 wmiCrypto.createKey = function(){
-    return encodeURIComponent(createRandomHash());
+    return encodeURIComponent(createRandomHash()).slice(0, 44);
 };
 
 var createRandomHash = function(){
