@@ -6,7 +6,7 @@ obj.name = 'Developer seeder';
 
 obj.seed = function(){
     models.Developer.create({
-        key: utils.createHash()
+        key: wmiCrypto.createHash()
     }).then(function(){
         console.log(obj.name + " completed.");
     });

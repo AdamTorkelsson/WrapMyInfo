@@ -18,6 +18,7 @@
     "express": "4.x",
     "express-force-ssl": "~0.2",
     "jade": "1.9.x",
+    "morgan": "^1.6.1",
     "pg": "4.x",
     "pg-hstore": "~2.3",
     "sequelize": "~3.5",

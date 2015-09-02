@@ -7,7 +7,7 @@ obj.name = 'User seeder';
 obj.seed = function(){
     models.Developer.findAll().then(function(developers){
         models.User.create({
-            key: utils.createHash(),
+            key: wmiCrypto.createHash(),
             DeveloperId: developers[0].id
         }).then(function(){
             console.log(obj.name + " completed.");
