@@ -51,13 +51,13 @@ router.put('/groups/:group', authorize.minDeveloper, groupController.putGroup);
 router.delete('/groups/:group', authorize.minDeveloper, groupController.deleteGroup);
 
 router.get('/groups/:group/members', authorize.minOwnerOfGroup, groupController.getGroupMembers);
+router.post('/groups/:group/members/', authorize.minUserOnSelf, groupController.postGroupMember);
 
-router.post('/groups/:group/members/:user', authorize.minUserOnSelf, groupController.postGroupMember);
 router.delete('/groups/:group/members/:user', authorize.minUserOnSelf, groupController.deleteGroupMember);
 
 router.get('/groups/:group/owners', authorize.minDeveloper, groupController.getGroupOwners);
+router.post('/groups/:group/owners/', authorize.minDeveloper, groupController.postGroupOwner);
 
-router.post('/groups/:group/owners/:user', authorize.minDeveloper, groupController.postGroupOwner);
 router.delete('/groups/:group/owners/:user', authorize.minDeveloper, groupController.deleteGroupOwner);
 
 
