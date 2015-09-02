@@ -26,15 +26,24 @@ var verifyDocument = function(req, func){
 // Controllers
 
 userController.getUsers = function(req, res){
-    models.User.findAll().then(function(users){
+    var developer = req.authenticated.entity;
+    models.User.findAll({
+        where: {
+            DeveloperId: developer.id
+        }
+    }).then(function(users){
+        for(var i = 0; i < users.length; i++){
+            delete users[i].dataValues.key;
+        }
         res.json(users);
     });
 };
 
 userController.postUser = function(req, res){
+    var developer = req.authenticated.entity;
     models.User.create({
         key: wmiCrypto.createKey(),
-        DeveloperId: 1
+        DeveloperId: developer.id
     }).then(function(user){
         res.json(user);
     });

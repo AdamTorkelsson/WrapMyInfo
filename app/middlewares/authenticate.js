@@ -1,11 +1,18 @@
 var models = require('../models');
 var wmiCrypto = require('../utils/wmi-crypto');
+var moment = require('moment');
 
 module.exports = function(req, res, next){
-    var token = req.get('Wrapmyinfo-Auth');
+    var tokenEarliestCreationTime = moment().subtract(14, 'days').format(); // Max age in seconds, set to 14 days
+    var token = req.get('Authorization');
     if(token){
         models.DeveloperToken.findOne({
-            where: {token: wmiCrypto.hashForDatabase(token)},
+            where: {
+                token: wmiCrypto.hashForDatabase(token),
+                createdAt: {
+                    gt: tokenEarliestCreationTime
+                }
+            },
             include: [models.Developer]
         }).then(function(developerToken){
             if(developerToken){
@@ -15,8 +22,13 @@ module.exports = function(req, res, next){
                 };
                 next();
             }else{
-                models.UserToken.findById({
-                    where: {token: wmiCrypto.hashForDatabase(token)},
+                models.UserToken.findOne({
+                    where: {
+                        token: wmiCrypto.hashForDatabase(token),
+                        createdAt: {
+                            gt: tokenEarliestCreationTime
+                        }
+                    },
                     include: [models.User]
                 }).then(function(userToken){
                     if(userToken){
