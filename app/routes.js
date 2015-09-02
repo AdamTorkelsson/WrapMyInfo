@@ -33,13 +33,11 @@ router.delete('/users/:user/schemas/:schema/documents/:document/blobs/:blob', au
 router.get('/users/:user/ownergroups/', authorize.minUserOnSelf, userController.getOwnerGroups);
 router.post('/users/:user/ownergroups/', authorize.minDeveloper, userController.postOwnerGroups);
 
-//router.put('/users/:user/ownergroups/:group', userController.putOwnerGroup);
 router.delete('/users/:user/ownergroups/:group', authorize.minUserOnSelf, userController.deleteOwnerGroup);
 
 router.get('/users/:user/membergroups/', authorize.minUserOnOwnedUser, userController.getMemberGroups);
 router.post('/users/:user/membergroups/', authorize.minUserOnSelf, userController.postMemberGroups);
 
-//router.put('/users/:user/membergroups/:group', userController.putMemberGroup);
 router.delete('/users/:user/membergroups/:group', authorize.minUserOnSelf, userController.deleteMemberGroup);
 
 

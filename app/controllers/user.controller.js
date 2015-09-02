@@ -212,10 +212,6 @@ userController.postOwnerGroups = function(req, res){
     //TODO: Implement
 };
 
-userController.putOwnerGroup = function(req, res){
-    //TODO: Implement
-};
-
 userController.deleteOwnerGroup = function(req, res){
     //TODO: Implement
 };
@@ -227,10 +223,6 @@ userController.getMemberGroups = function(req, res){
 };
 
 userController.postMemberGroups = function(req, res){
-    //TODO: Implement
-};
-
-userController.putMemberGroup = function(req, res){
     //TODO: Implement
 };
 
