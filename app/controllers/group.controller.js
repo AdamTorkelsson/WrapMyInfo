@@ -23,7 +23,11 @@ groupController.postGroup = function(req, res){
 
 groupController.getGroup = function(req, res){
     var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
-    models.Group.findById(req.params.group, {
+    models.Group.findOne({
+        where: {
+            id: req.params.group,
+            DeveloperId: developer.id
+        },
         include: [models.Schema]
     }).then(function(group){
         if(group){
@@ -38,8 +42,14 @@ groupController.getGroup = function(req, res){
 };
 
 groupController.putGroup = function(req, res){
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     if(req.body.name){
-        models.Group.findById(req.params.group).then(function(group){
+        models.Group.findOne({
+            where: {
+                id: req.params.group,
+                DeveloperId: developer.id
+            }
+        }).then(function(group){
             if(group){
                 group.name = req.body.name;
                 group.save().then(function(savedGroup){
@@ -60,9 +70,11 @@ groupController.putGroup = function(req, res){
 };
 
 groupController.deleteGroup = function(req, res){
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.Group.destroy({
         where: {
-            id: req.params.group
+            id: req.params.group,
+            DeveloperId: developer.id
         }
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
@@ -79,6 +91,8 @@ groupController.deleteGroup = function(req, res){
 };
 
 groupController.getGroupMembers = function(req, res){
+    //TODO: Make sure that Developer is the owner of the Group
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserMemberGroup.findAll({
         where: {
             GroupId: req.params.group
@@ -95,7 +109,9 @@ groupController.getGroupMembers = function(req, res){
 };
 
 groupController.postGroupMember = function(req, res){
+    //TODO: Make sure that Developer is the owner of the Group
     //TODO: Use bulkCreate and allow array of Users
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserMemberGroup.create({
         UserId: req.body.UserId,
         GroupId: req.params.group
@@ -108,7 +124,9 @@ groupController.postGroupMember = function(req, res){
 };
 
 groupController.deleteGroupMember = function(req, res){
+    //TODO: Make sure that Developer is the owner of the Group
     //TODO: Use bulkDestroy and allow array of Users
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserMemberGroup.destroy({
         where: {
             UserId: req.params.user,
@@ -128,6 +146,8 @@ groupController.deleteGroupMember = function(req, res){
 };
 
 groupController.getGroupOwners = function(req, res){
+    //TODO: Make sure that Developer is the owner of the Group
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserOwnerGroup.findAll({
         where: {
             GroupId: req.params.group
@@ -144,7 +164,9 @@ groupController.getGroupOwners = function(req, res){
 };
 
 groupController.postGroupOwner = function(req, res){
+    //TODO: Make sure that Developer is the owner of the Group
     //TODO: Use bulkCreate and allow array of Users
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserOwnerGroup.create({
         UserId: req.body.UserId,
         GroupId: req.params.group
@@ -157,7 +179,9 @@ groupController.postGroupOwner = function(req, res){
 };
 
 groupController.deleteGroupOwner = function(req, res){
+    //TODO: Use bulkCreate and allow array of Users
     //TODO: Use bulkDestroy and allow array of Users
+    var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.UserOwnerGroup.destroy({
         where: {
             UserId: req.params.user,
