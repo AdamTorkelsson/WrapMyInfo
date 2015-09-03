@@ -81,6 +81,9 @@ userController.getDocuments = function(req, res){
             SchemaId: req.params.schema
         }
     }).then(function(documents){
+        for(var i = 0; i < documents.length; i++){
+            documents[i].data = wmiCrypto.decryptData(documents[i].data);
+        }
         res.json(documents);
         //TODO: Enable fetching Blobs with req.query.includeBlobs
     });
@@ -91,14 +94,16 @@ userController.postDocument = function(req, res){
         UserId: req.params.user,
         SchemaId: req.params.schema,
         meta: req.body.meta,
-        data: req.body.data
+        data: wmiCrypto.encryptData(req.body.data)
     }).then(function(document){
+        document.data = req.body.data;
         res.json(document);
     });
 };
 
 userController.getDocument = function(req, res){
     verifyDocument(req, function(document){
+        document.data = wmiCrypto.decryptData(document.data);
         res.json(document);
     });
 };
@@ -106,9 +111,10 @@ userController.getDocument = function(req, res){
 userController.putDocument = function(req, res){
     verifyDocument(req, function(document){
         //TODO: Verify structure against Schema, and replace if it matches.
-        document.data = req.body.data;
+        document.data = wmiCrypto.encryptData(req.body.data);
         document.meta = req.body.meta;
         document.save().then(function(savedDocument){
+            savedDocument.data = req.body.data;
             res.json(savedDocument)
         });
     });
@@ -126,6 +132,10 @@ userController.deleteDocument = function(req, res){
 
 userController.getBlobs = function(req, res){
     verifyDocument(req, function(document){
+        var blobs = document.Blobs;
+        for(var i = 0; i < blobs.length; i++){
+            blobs[i].blob = wmiCrypto.decryptData(blobs[i].blob);
+        }
         res.json(document.Blobs);
     });
 };
@@ -135,8 +145,9 @@ userController.postBlob = function(req, res){
         models.Blob.create({
             DocumentId: document.id,
             meta: req.body.meta,
-            blob: req.body.blob
+            blob: wmiCrypto.encryptData(req.body.blob)
         }).then(function(blob){
+            blob.blob = req.body.blob;
             res.json(blob);
         });
     });
@@ -154,6 +165,7 @@ userController.getBlob = function(req, res){
                     error: "The specified Document is not the owner of this Blob."
                 }); //TODO: Make error messages better.
             }else{
+                blob.blob = wmiCrypto.decryptData(blob.blob);
                 res.json(blob);
             }
         });
@@ -173,8 +185,9 @@ userController.putBlob = function(req, res){
                 }); //TODO: Make error messages better.
             }else{
                 blob.meta = req.body.meta;
-                blob.blob = req.body.blob;
+                blob.blob = wmiCrypto.encryptData(req.body.blob);
                 blob.save().then(function(savedBlob){
+                    savedBlob.blob = req.body.blob;
                     res.json(savedBlob);
                 });
             }
