@@ -13,7 +13,7 @@ This API is still heavily under development and therefore much will change durin
 
 # WrapMyInfo
 
-A backend project supported by Internetfonden.
+A software project supported by Internetfonden.
 
 https://www.internetfonden.se/wrapmyinfo/ (In Swedish)
 www.encubator.com 
@@ -46,9 +46,13 @@ This will be further developed as the software functionality grows!
 ## Overview 
 Architecture Overview Image - Coming soon
 
-The main resources of this backend is the Schema, Document, Blob, Users and Groups.  The Schema is where you decide how the data your store within your Documents are going to be structured and what it consist of, it is also where you decide if your Documents should have Blob's(large files) or not. For example could you (Ex. step1) define a schema after what you need for a hospital visit. Then you (Ex. step2)create a Document after that Schema and start to (Ex. step3)store a users information within it. As a hospital visit may include pictures you have defined your hospital visit schema to make the Document have zero,one or several Blob "children" in which you easily can store these pictures. We have designed it this way to make it possible for the backend to verify and maintain the database for you while being dynamic and possible to use for a lot of different kind of softwares.  
+The main resources of this backend is the Schema, Document, Blob, Users and Groups. You decide how the data should be stored within your Documents using Schemas, this includes how the data should be structured, what it should consist of and if the Documents shall have Blobs (large files) or not.  
 
-Primarly this software is built to work together with your own backend and not on its own. It is built in a way that we hopes enable as many as possible to be able to integrate with it and gain value from it. The things your own backend needs to take care of is if you have more than one type of user and these users needs to gain access to each others information. This is done with groups but this functionality needs your backend to verify which users should be permitted to become owners of groups. You moreover need a backend to handle login and update tokens. You moreover need to distribute the tokens to the right user. In your own backend you should therefore store the developerID, developerKey and all your users unique UserID. It is however important to never transfer user sensetive information through your own backend since this would require you to keep as a high security level on your own backend.   
+**Hospital visit example:** 
+Define a Schema (step 1) after what shall be included in a hospital visit. Then, Create a Document (step 2) after that Schema and start to store a users information within it (step 3). As a hospital visit may include large emr pictures you have defined your hospital visit Schema to make the Document have several Blob "children" in which you easily can store these pictures. 
+This design has been chosen to make it possible for the backend to verify and maintain the database for you while being dynamic and possible to use for many different types of softwares.  Documents and Blobs does as well have meta data stored to help you identify them. 
+
+Primarly this software is built to work together with your own backend and not on its own. It is built in a way that we hope enable as many as possible to be able to integrate with it and gain value from it. The things your own backend needs to take care of is if you have more than one type of user and these users needs to gain access to each others information. This is done with groups but the functionality needs your backend to verify which users should be permitted to become owners of groups. You moreover need a backend to handle login and update tokens and you need to distribute the tokens to the right user. You should therefor, in your own backend, store the developerID, developerKey and all your users unique UserID. It is however important to never transfer user sensetive information through your own backend since this would require you to keep as a high security level on your own backend.   
 
 A short description of the main resources:
 * A Schema contains the description of a documents data, it is used to verify data and maintain consistensy in the stored information.
@@ -87,11 +91,16 @@ Two different kind of tokens exist, Developer token and the user token. The deve
 ### CREATE A DEVELOPER TOKEN
 ```javascript
 URL: BASE_URL + /auth/:developer
-Method: [GET]
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperID,DevelopeKey>
-```
+Authorization: <>
+body*
+{
+DeveloperID: 'gagaVASNk',
+DeveloperKey: 'faafasvKSj'
+}
 
+```
 **answer:**
 ```javascript
 {
@@ -101,10 +110,10 @@ Authorization: <DeveloperID,DevelopeKey>
 
 ### CREATE A USER TOKEN
 ```javascript
-URL: BASE_URL + /auth/user/:user
+URL: BASE_URL + /auth/
 Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID,DeveloperToken>
 ```
 
 **body**
@@ -136,36 +145,36 @@ Create a new schema that describes document content.
 URL: BASE_URL + /schemas
 Method: [CREATE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID,DeveloperToken>
 ```
 **body structure/example**
 ```javascript
 {
-  ‘description’: ‘patientSchema’,
-   ‘fields’: [
+  'description': 'patientSchema',
+   'data': [
       {
-      ‘name’: ‘physician’,
-        ‘type’: ‘string’
+      'name': 'physician',
+        'type': 'string'
         'standardvalue': 'null'
       },
       {
-        ‘name’: ‘birth_date’,
-        ‘type’: ‘date',
+        'name': 'birth_date',
+        'type': ‘date',
         'standardvalue': 'null'
       },
             {
-        ‘name’: ‘patient_journal’,
-        ‘type’: ‘json',
+        'name': 'patient_journal',
+        'type': 'json',
         'standardvalue': 'null'
       },
       {
-        ‘name’: ‘disease’,
-        ‘type’: ‘string’,
-        'standardvalue': '"none"'
+        'name': 'disease',
+        'type': 'string',
+        'standardvalue': 'none'
       },
       {
-        ‘name’: ‘date_visit’,
-        ‘type’: ‘int’,
+        'name': 'date_visit',
+        'type': 'int',
         'standardvalue': '-1'
       }
     ]
@@ -178,12 +187,18 @@ Authorization: <DeveloperToken>
 }
 ```
 #### UPDATE AN EXISTING SCHEMA
-Update an existing schema that describes document content. ** Did we do this by updating or replacing?"  ** 
+Update an existing schema that describes document content. 
+
+
+TYPE IF changed standardvalue will be set to all users documents 
+StandardValue : all those with old standardvalue will get new standardvalue
+name: All id 
+
 ```javascript
 URL: BASE_URL + /schemas/Schema/:Schema
 Method: [PUT]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID,DeveloperToken>
 ```
 
 **body structure/example**
@@ -192,7 +207,8 @@ Authorization: <DeveloperToken>
   ‘description’: ‘patientSchema’,
    ‘fields’: [
       {
-      ‘name’: ‘physician’,
+      'oldKey': 'Physician
+      ‘Key’: ‘KneePhysician’,
         ‘type’: ‘string’,
         'standardvalue': ''
       },
@@ -210,7 +226,7 @@ List all the Schemas you have created.
 URL: BASE_URL + /schemas
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID,DeveloperToken>
 ```
 **answer:**
 ```javascript
@@ -223,7 +239,7 @@ Get a single Schema you previously have created.
 URL: BASE_URL + /schemas/Schema/:Schema
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperToken> or <UserToken>
+Authorization: <DeveloperID,DeveloperToken> or <DeveloperID,UserToken>
 ```
 
 **answer:**
@@ -236,7 +252,7 @@ Delete a schema you have created, all relating documents will be deleted as well
 URL: BASE_URL + /schemas/Schema/:Schema
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization:  <DeveloperID,DeveloperToken>
 ```
 **answer:**
 ```javascript
@@ -250,7 +266,7 @@ Documents are meant to store all information and are defined by their correlatin
 URL: BASE_URL + /User/:User/Schema/:Schema
 Method: [CREATE]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID,UserToken>
 ```
 
 **body example/structure:**
@@ -282,7 +298,7 @@ Get all documents that correlates to a Schema for a user.
 URL: BASE_URL + /User/:user/Schema/:Schema
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID,UserToken>
 ```
 **answer:**
 ```javascript
@@ -294,7 +310,7 @@ Get a single document, by identifing it with its ID.
 URL: BASE_URL + /User/:User/Schema/:Schema/:document
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID,UserToken>
 ```
 **answer:**
 ```javascript
@@ -307,7 +323,7 @@ Get a list of all schemas that a user has created correlating document(s) to.
 URL: BASE_URL + /User/:User/schemaList
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID,UserToken>
 ```
 **answer:**
 ```javascript
@@ -320,7 +336,7 @@ Update an existing document with new information or hange previously created inf
 URL: BASE_URL + /User/:User/Schema/:Schema/:document
 Method: [PUT]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID,UserToken>
 ```
 
 **body:**
@@ -338,7 +354,7 @@ Delete a created document
 URL: BASE_URL + /User/Schema/:Schema/:document
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization:  <DeveloperID,UserToken>
 ```
 
 ### BLOB 
@@ -368,7 +384,7 @@ Coming soon
 URL: BASE_URL + /users
 Method: [CREATE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID,DeveloperToken>
 ```
 
 **body:**
@@ -390,7 +406,7 @@ Get a list of all users
 URL: BASE_URL + /users
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization:  <DeveloperID,DeveloperToken>
 ```
 
 #### DELETE A USER
@@ -547,7 +563,7 @@ So if you include both schemaID and userID the search will only include that use
 
 #### OPTIONS - THE SETTINGS FOR YOUR SEARCH
 In options all the settings for the search is choosed. 
-+ **maxCountDocument:** number - The maximum count coverage of the query, if higher the search will not initiate. Standardvalue is 100. 
++ **maxCountDocument:** number - The maximum count coverage of the query, if higher the search will not initiate. Standardvalue is 1000. 
 + **maxSpanSize:** number (mb) The maximum size coverage of the query, if higher the search will not initiate. Standardvalue is 1 (mb).
 
 #### QUERY 
@@ -561,7 +577,7 @@ This query is an jsonArray that can include these search terms:
 
 
 The JSON with the search request should be structured as the example below:
-```javascript
+```javasript
 { span: {
     schemaID: 'vadfafsmKFF9',
     DocumentMeta: true,
@@ -570,7 +586,10 @@ The JSON with the search request should be structured as the example below:
     options: {
     maxSizeSearch: 0.1
     }
-    filters:[
+      metaQuery: []
+      dataQuery: [] 
+      allQuery: [] 
+      queries:[
         {
             ‘field’: ‘hospital’,
             ‘value’: ’Storsjukhuset’, 
@@ -598,9 +617,12 @@ The JSON with the search request should be structured as the example below:
 
 ```javascript
 'result': success, 
-'data': {
+'data': [{
     'schemaID':
     'documentID': 
+    'blobID': 
     'userID':
-}
+},
+{}
+]
 ```
