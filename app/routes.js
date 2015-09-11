@@ -66,14 +66,17 @@ router.delete('/groups/:group/owners/:user', authorize.minDeveloper, groupContro
 router.get('/schemas', authorize.minDeveloper, schemaController.getSchemas);
 router.post('/schemas', authorize.minDeveloper, schemaController.postSchemas);
 
-router.get('/schemas/:schema', /* TODO: Add authorization level */schemaController.getSchema);
+router.get('/schemas/:schema', authorize.minDeveloper, schemaController.getSchema);
 router.put('/schemas/:schema', authorize.minDeveloper, schemaController.putSchema);
 router.delete('/schemas/:schema', authorize.minDeveloper, schemaController.deleteSchema);
 
 
 // Auth Controller
 
-router.get('/auth/:key', authorize.all, authController.getToken);
+router.post('/auth/developer', authorize.all, authController.postDeveloperToken);
+router.post('/auth/user', authorize.all, authController.postUserToken);
+
+router.get('/auth/status', authorize.all, authController.getAuthStatus);
 
 
 // Static Controller

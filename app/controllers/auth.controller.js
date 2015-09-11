@@ -1,14 +1,17 @@
 var models = require('../models');
+var errors = require('../utils/errors');
 var wmiCrypto = require("../utils/wmi-crypto");
 
 var authController = {};
 
-authController.getToken = function(req, res){
-    var key = req.params.key;
-    if(key){
+authController.postDeveloperToken = function(req, res){
+    var developerId = req.body.id;
+    var developerKey = req.body.key;
+    if(developerId && developerKey){
         models.Developer.findOne({
             where: {
-                key: key
+                id: developerId,
+                key: wmiCrypto.hashForDatabase(developerKey)
             }
         }).then(function(developer){
             if(developer){
@@ -21,32 +24,65 @@ authController.getToken = function(req, res){
                     res.json(developerToken);
                 });
             }else{
-                models.User.findOne({
-                    where: {
-                        key: key
-                    }
-                }).then(function(user){
-                    if(user){
-                        var token = wmiCrypto.createToken();
-                        models.UserToken.create({
-                            token: wmiCrypto.hashForDatabase(token),
-                            UserId: user.id
-                        }).then(function(userToken){
-                            userToken.token = token;
-                            res.json(userToken);
-                        });
-                    }else{
-                        res.json({
-                            error: "Not found",
-                            solution: "Get a valid key"
-                        });
-                    }
+                res.json({
+                    error: "Not found",
+                    solution: "Get a valid key"
                 });
             }
         });
     }else{
         res.json({
             error: "Not authenticated"
+        });
+    }
+};
+
+authController.postUserToken = function(req, res){
+    var developer = req.authenticated.entity;
+    var userId = req.body.id;
+    if(developer && userId){
+        models.User.findOne({
+            where: {
+                id: userId,
+                DeveloperId: developer.id
+            }
+        }).then(function(user){
+            if(user){
+                var token = wmiCrypto.createToken();
+                models.UserToken.create({
+                    token: wmiCrypto.hashForDatabase(token),
+                    UserId: user.id
+                }).then(function(userToken){
+                    userToken.token = token;
+                    res.json(userToken);
+                });
+            }else{
+                res.json({
+                    error: "Not found",
+                    solution: "Get a valid key"
+                });
+            }
+        });
+    }else{
+        res.json({
+            error: "Not authenticated"
+        });
+    }
+};
+
+authController.getAuthStatus = function (req, res) {
+    var entity = req.authenticated.entity;
+
+    if(entity){
+        res.json({
+            authenticated: true,
+            status: "Authenticated",
+            id: entity.id
+        });
+    }else{
+        res.json({
+            authenticated: false,
+            status: "Unauthenticated"
         });
     }
 };
