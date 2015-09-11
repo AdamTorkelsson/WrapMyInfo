@@ -1,20 +1,50 @@
 var crypto = require('crypto');
+var json3 = require("json3");
+
+var algorithm = "AES-256-CTR";
+
 
 var wmiCrypto = {};
 
+/**
+ * Hashes text.
+ * @param data {string}
+ * @returns {string}
+ */
 wmiCrypto.hashForDatabase = function(data){
     //TODO: Implement
     return 'DATABASE--' + data;
 };
 
-wmiCrypto.encryptData = function(data){
-    //TODO: Implement
-    return 'ENCRYPTED--' + data;
+/**
+ * Encrypts plaintext.
+ * @param plaintext {string}
+ * @returns {string}
+ */
+wmiCrypto.encryptText = function(plaintext){
+    var cipher = crypto.createCipher(algorithm, process.env.DB_ENCRYPTION_KEY);
+    var cipherText = cipher.update(plaintext, 'utf8', 'hex');
+    cipherText += cipher.final('hex');
+    return cipherText;
 };
 
-wmiCrypto.decryptData = function(data){
-    //TODO: Implement
-    return data.slice(11);
+wmiCrypto.decryptText = function(ciphertext){
+    var decipher = crypto.createDecipher(algorithm, process.env.DB_ENCRYPTION_KEY);
+    var plainText = decipher.update(ciphertext, 'hex', 'utf8');
+    plainText += decipher.final('utf8');
+    return plainText;
+};
+
+wmiCrypto.encryptObject = function(plainObject){
+    return this.encryptText(JSON.stringify(plainObject));
+};
+
+wmiCrypto.decryptAsObject = function(ciphertext){
+    ciphertext = ciphertext.toString(); // Make sure string is our target.
+    //console.log("Ciphertext typeof=" + typeof ciphertext);
+    var ciphertextRemovedDoublequotes = ciphertext.replace(/^"(.*)"$/, '$1'); // Workaround since Sequelize adds doublequotes to string when saving to database. Needs to be removed when fetching.
+    var plaintext = this.decryptText(ciphertextRemovedDoublequotes);
+    return JSON.parse(plaintext);
 };
 
 wmiCrypto.createToken = function(){
