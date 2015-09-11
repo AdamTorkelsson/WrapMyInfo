@@ -1,5 +1,5 @@
 var models = require("../../app/models");
-var utils = require('../../app/utils/utils');
+var wmiCrypto = require('../../app/utils/wmi-crypto');
 
 var obj = {};
 obj.name = 'Document seeder';
@@ -11,9 +11,9 @@ obj.seed = function(){
         meta: {
             meta: 'Hello'
         },
-        data: {
-            json: 'True dat'
-        }
+        data: wmiCrypto.encryptObject({
+            json: "True dat"
+        })
     }).then(function(){
         console.log(obj.name + " completed.");
     });

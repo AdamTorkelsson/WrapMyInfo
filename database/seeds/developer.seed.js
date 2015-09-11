@@ -1,14 +1,15 @@
 var models = require("../../app/models");
-var utils = require('../../app/utils/utils');
+var wmiCrypto = require('../../app/utils/wmi-crypto');
 
 var obj = {};
 obj.name = 'Developer seeder';
 
 obj.seed = function(){
+    var key = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
     models.Developer.create({
-        key: wmiCrypto.createHash()
+        key: wmiCrypto.hashForDatabase(key)
     }).then(function(){
-        console.log(obj.name + " completed.");
+        console.log(obj.name + " completed, key=" + key);
     });
 };
 

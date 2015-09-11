@@ -1,5 +1,5 @@
 var models = require("../../app/models");
-var utils = require('../../app/utils/utils');
+var wmiCrypto = require('../../app/utils/wmi-crypto');
 
 var obj = {};
 obj.name = 'Blob seeder';
@@ -9,7 +9,8 @@ obj.seed = function(){
         DocumentId: 1,
         meta: {
             hello: 'meta'
-        }
+        },
+        blob: wmiCrypto.encryptText("This is blob")
     }).then(function(){
         console.log(obj.name + " completed.");
     });

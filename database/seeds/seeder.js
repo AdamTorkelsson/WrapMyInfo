@@ -8,6 +8,8 @@ seeds.push(require('./user.seed'));
 seeds.push(require('./schema.seed'));
 seeds.push(require('./document.seed'));
 seeds.push(require('./blob.seed'));
+seeds.push(require('./developer-token.seed'));
+seeds.push(require('./user-token.seed'));
 
 var i = 0;
 
