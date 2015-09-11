@@ -1,19 +1,21 @@
 var crypto = require('crypto');
-var json3 = require("json3");
+var bcrypt = require('bcrypt');
 
 var algorithm = "AES-256-CTR";
 
 
 var wmiCrypto = {};
 
-/**
- * Hashes text.
- * @param data {string}
- * @returns {string}
- */
-wmiCrypto.hashForDatabase = function(data){
-    //TODO: Implement
-    return 'DATABASE--' + data;
+
+wmiCrypto.createHash = function(data){
+    //var saltRounds = 10;
+    //return bcrypt.hashSync(data, saltRounds);
+    return "DATABASE--" + data
+};
+
+wmiCrypto.compareHash = function(receivedData, storedData){
+    //return bcrypt.compareSync(receivedData, storedData);
+    return "DATABASE--" + receivedData === storedData;
 };
 
 /**

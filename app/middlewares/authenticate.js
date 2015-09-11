@@ -24,7 +24,7 @@ module.exports = function(req, res, next){
             }else{
                 models.UserToken.findOne({
                     where: {
-                        token: wmiCrypto.hashForDatabase(token),
+                        token: wmiCrypto.createHash(token),
                         createdAt: {
                             gt: tokenEarliestCreationTime
                         }
