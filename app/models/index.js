@@ -7,12 +7,14 @@ var basename  = path.basename(module.filename);
 var db        = {};
 
 var sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASS, {
-    host: process.env.DB_HOST, dialect: 'postgres',
+    host: process.env.DB_HOST,
+    dialect: 'postgres',
     pool: {
         max: 5,
         min: 0,
         idle: 10000
-    }
+    },
+    logging: process.env.APP_DEBUG === 'true' ? console.log : false
 });
 
 fs
