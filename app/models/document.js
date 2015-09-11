@@ -2,7 +2,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Document = sequelize.define('Document', {
     meta: DataTypes.JSON,
-    data: DataTypes.JSON
+    data: DataTypes.BLOB
   }, {
     classMethods: {
       associate: function(models) {
