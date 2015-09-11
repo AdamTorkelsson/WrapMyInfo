@@ -23,6 +23,7 @@ echo "--- Install Bower, less compiler and supervisor ---"
 #sudo npm install -g bower
 #sudo npm install -g less
 sudo npm install -g supervisor
+sudo npm install -g jasmine-node
 
 echo "--- cd into /home/vagrant/wrapmyinfo ---"
 cd /home/vagrant/wrapmyinfo
@@ -49,6 +50,8 @@ echo "alias wrapmyinfo-migrate-rollback='nodejs /home/vagrant/wrapmyinfo/node_mo
 echo "alias wrapmyinfo-migrate-rollbackall='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate:undo:all --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
 echo "alias wrapmyinfo-create-migration='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize migration:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
 echo "alias wrapmyinfo-create-model='nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize model:create --migrations-path database/migrations --models-path app/models'" >> /home/vagrant/.bashrc
+echo "alias wrapmyinfo-seed-db='node /home/vagrant/wrapmyinfo/database/seeds/seeder.js'" >> /home/vagrant/.bashrc
+#echo "alias wrapmyinfo-remigrate-seed='wrapmyinfo-migrate-rollbackall && wrapmyinfo-migrate && wrapmyinfo-seed-db'"
 
 echo "--- Configure environment variables ---"
 [ ! -f /home/vagrant/wrapmyinfo/.env ] && cp /home/vagrant/wrapmyinfo/.env.vagrant /home/vagrant/wrapmyinfo/.env.vagrant
