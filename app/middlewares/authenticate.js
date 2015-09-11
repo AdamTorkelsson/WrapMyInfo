@@ -8,7 +8,7 @@ module.exports = function(req, res, next){
     if(token){
         models.DeveloperToken.findOne({
             where: {
-                token: wmiCrypto.hashForDatabase(token),
+                token: wmiCrypto.createTokenHash(token),
                 createdAt: {
                     gt: tokenEarliestCreationTime
                 }
@@ -24,7 +24,7 @@ module.exports = function(req, res, next){
             }else{
                 models.UserToken.findOne({
                     where: {
-                        token: wmiCrypto.createHash(token),
+                        token: wmiCrypto.createTokenHash(token),
                         createdAt: {
                             gt: tokenEarliestCreationTime
                         }

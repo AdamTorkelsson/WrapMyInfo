@@ -7,7 +7,7 @@ obj.name = 'Developer seeder';
 obj.seed = function(){
     var key = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
     models.Developer.create({
-        key: wmiCrypto.createHash(key)
+        key: wmiCrypto.createAccessKeyHash(key)
     }).then(function(){
         console.log(obj.name + " completed, key=" + key);
     });

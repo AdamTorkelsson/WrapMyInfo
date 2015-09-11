@@ -10,7 +10,7 @@ obj.seed = function(){
         include: [models.User]
     }).then(function(developer){
         models.UserToken.create({
-            token: wmiCrypto.createHash(token),
+            token: wmiCrypto.createTokenHash(token),
             UserId: developer.Users[0].id
         }).then(function(){
             console.log(obj.name + " completed, token=" + token);

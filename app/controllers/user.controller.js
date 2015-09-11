@@ -43,7 +43,7 @@ userController.getUsers = function(req, res){
 userController.postUser = function(req, res){
     var developer = req.authenticated.entity;
     models.User.create({
-        key: wmiCrypto.createKey(),
+        key: wmiCrypto.createAccessKey(),
         DeveloperId: developer.id
     }).then(function(user){
         res.json(user);

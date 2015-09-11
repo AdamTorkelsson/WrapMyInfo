@@ -8,7 +8,7 @@ obj.seed = function(){
     var token = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A=';
     models.Developer.findOne().then(function(developer){
         models.DeveloperToken.create({
-            token: wmiCrypto.createHash(token),
+            token: wmiCrypto.createTokenHash(token),
             DeveloperId: developer.id
         }).then(function(){
             console.log(obj.name + " completed, token=" + token);

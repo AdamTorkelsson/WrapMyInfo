@@ -10,14 +10,13 @@ authController.postDeveloperToken = function(req, res){
     if(developerId && developerKey){
         models.Developer.findOne({
             where: {
-                id: developerId,
-                key: wmiCrypto.createHash(developerKey)
+                id: developerId
             }
         }).then(function(developer){
-            if(developer){
+            if(developer && wmiCrypto.compareAccessKeyHash(developerKey, developer.key)){
                 var token = wmiCrypto.createToken();
                 models.DeveloperToken.create({
-                    token: wmiCrypto.createHash(token),
+                    token: wmiCrypto.createTokenHash(token),
                     DeveloperId: developer.id
                 }).then(function (developerToken) {
                     developerToken.token = token;
@@ -50,7 +49,7 @@ authController.postUserToken = function(req, res){
             if(user){
                 var token = wmiCrypto.createToken();
                 models.UserToken.create({
-                    token: wmiCrypto.createHash(token),
+                    token: wmiCrypto.createTokenHash(token),
                     UserId: user.id
                 }).then(function(userToken){
                     userToken.token = token;
