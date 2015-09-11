@@ -1,13 +1,16 @@
 var frisby = require('frisby');
 var url = 'http://localhost:8081';
-var developerKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
-var developerToken = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A=';
-var userToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc=';
+var validDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
+var invalidDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV';
+var validDeveloperToken = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A=';
+var invalidDeveloperToken = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A';
+var validUserToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc=';
+var invalidUserToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc';
 
-frisby.create('POST /auth/developer Get a DeveloperToken')
+frisby.create('POST /auth/developer Get a DeveloperToken, should succeed')
     .post(url + '/auth/developer', {
         id: 1,
-        key: developerKey
+        key: validDeveloperKey
     }, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
@@ -17,9 +20,22 @@ frisby.create('POST /auth/developer Get a DeveloperToken')
     })
 .toss();
 
-frisby.create('POST /auth/user Get a UserToken')
+frisby.create('POST /auth/developer Get a DeveloperToken, should fail')
+    .post(url + '/auth/developer', {
+        id: 1,
+        key: invalidDeveloperKey
+    }, {json: true})
+    .expectStatus(200)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        error: "Not found",
+        solution: "Get a valid key"
+    })
+.toss();
+
+frisby.create('POST /auth/user Get a UserToken, should succeed')
     .addHeaders({
-        Authorization: developerToken
+        Authorization: validDeveloperToken
     })
     .post(url + '/auth/user', {
         id: 1
@@ -30,11 +46,25 @@ frisby.create('POST /auth/user Get a UserToken')
         token: String,
         UserId: Number
     })
-    .toss();
+.toss();
 
-frisby.create('GET /auth/status Check if DeveloperToken is valid')
+frisby.create('POST /auth/user Get a UserToken, should fail')
     .addHeaders({
-        Authorization: developerToken
+        Authorization: invalidDeveloperToken
+    })
+    .post(url + '/auth/user', {
+        id: 1
+    }, {json: true})
+    .expectStatus(200)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        error: "Not authenticated"
+    })
+.toss();
+
+frisby.create('GET /auth/status Check if DeveloperToken is valid, should be valid')
+    .addHeaders({
+        Authorization: validDeveloperToken
     })
     .get(url + '/auth/status')
     .expectStatus(200)
@@ -46,9 +76,22 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid')
     })
 .toss();
 
-frisby.create('GET /auth/status Check if UserToken is valid')
+frisby.create('GET /auth/status Check if DeveloperToken is valid, should be invalid')
     .addHeaders({
-        Authorization: userToken
+        Authorization: invalidDeveloperToken
+    })
+    .get(url + '/auth/status')
+    .expectStatus(200)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        authenticated: false,
+        status: "Unauthenticated"
+    })
+.toss();
+
+frisby.create('GET /auth/status Check if UserToken is valid, should be valid')
+    .addHeaders({
+        Authorization: validUserToken
     })
     .get(url + '/auth/status')
     .expectStatus(200)
@@ -57,5 +100,18 @@ frisby.create('GET /auth/status Check if UserToken is valid')
         authenticated: true,
         status: "Authenticated",
         id: 1
+    })
+.toss();
+
+frisby.create('GET /auth/status Check if UserToken is valid, should be invalid')
+    .addHeaders({
+        Authorization: invalidUserToken
+    })
+    .get(url + '/auth/status')
+    .expectStatus(200)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        authenticated: false,
+        status: "Unauthenticated"
     })
 .toss();
