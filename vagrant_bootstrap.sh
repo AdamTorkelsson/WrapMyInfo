@@ -58,7 +58,7 @@ echo "--- Configure environment variables ---"
 nodejs /home/vagrant/wrapmyinfo/bin/build.js
 
 echo "--- Migrate Database --- "
-wrapmyinfo-migrate
+nodejs /home/vagrant/wrapmyinfo/node_modules/.bin/sequelize db:migrate --migrations-path database/migrations --models-path app/models
 
 echo "--- Generate SSL/TLS key and cert ---"
 mkdir tls
