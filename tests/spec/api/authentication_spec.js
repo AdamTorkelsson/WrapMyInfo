@@ -1,5 +1,8 @@
+require('dotenv').load();
 var frisby = require('frisby');
-var url = 'http://localhost:8081';
+var url = 'http://' + process.env.APP_HOST;
+var port = process.env.APP_PORT;
+
 var validDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
 var invalidDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV';
 var validDeveloperToken = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A=';
@@ -8,7 +11,7 @@ var validUserToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc=';
 var invalidUserToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc';
 
 frisby.create('POST /auth/developer Get a DeveloperToken, should succeed')
-    .post(url + '/auth/developer', {
+    .post(url + ':' + port + '/auth/developer', {
         id: 1,
         key: validDeveloperKey
     }, {json: true})
@@ -21,7 +24,7 @@ frisby.create('POST /auth/developer Get a DeveloperToken, should succeed')
 .toss();
 
 frisby.create('POST /auth/developer Get a DeveloperToken, should fail')
-    .post(url + '/auth/developer', {
+    .post(url + ':' + port + '/auth/developer', {
         id: 1,
         key: invalidDeveloperKey
     }, {json: true})
@@ -37,7 +40,7 @@ frisby.create('POST /auth/user Get a UserToken, should succeed')
     .addHeaders({
         Authorization: validDeveloperToken
     })
-    .post(url + '/auth/user', {
+    .post(url + ':' + port + '/auth/user', {
         id: 1
     }, {json: true})
     .expectStatus(200)
@@ -52,7 +55,7 @@ frisby.create('POST /auth/user Get a UserToken, should fail')
     .addHeaders({
         Authorization: invalidDeveloperToken
     })
-    .post(url + '/auth/user', {
+    .post(url + ':' + port + '/auth/user', {
         id: 1
     }, {json: true})
     .expectStatus(200)
@@ -66,7 +69,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be vali
     .addHeaders({
         Authorization: validDeveloperToken
     })
-    .get(url + '/auth/status')
+    .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -80,7 +83,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be inva
     .addHeaders({
         Authorization: invalidDeveloperToken
     })
-    .get(url + '/auth/status')
+    .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -93,7 +96,7 @@ frisby.create('GET /auth/status Check if UserToken is valid, should be valid')
     .addHeaders({
         Authorization: validUserToken
     })
-    .get(url + '/auth/status')
+    .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -107,7 +110,7 @@ frisby.create('GET /auth/status Check if UserToken is valid, should be invalid')
     .addHeaders({
         Authorization: invalidUserToken
     })
-    .get(url + '/auth/status')
+    .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({

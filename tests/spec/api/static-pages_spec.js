@@ -1,8 +1,10 @@
+require('dotenv').load();
 var frisby = require('frisby');
-var url = 'http://localhost:8081';
+var url = 'http://' + process.env.APP_HOST;
+var port = process.env.APP_PORT;
 
 frisby.create('GET /')
-    .get(url)
+    .get(url + ':' + port)
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -12,7 +14,7 @@ frisby.create('GET /')
 .toss();
 
 frisby.create('GET /about')
-    .get(url + '/about')
+    .get(url + ':' + port + '/about')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({

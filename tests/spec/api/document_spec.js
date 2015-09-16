@@ -1,5 +1,8 @@
+require('dotenv').load();
 var frisby = require('frisby');
-var url = 'http://localhost:8081';
+var url = 'http://' + process.env.APP_HOST;
+var port = process.env.APP_PORT;
+
 var developerKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
 var developerToken = 'xtNZPu1IJdZcIGKRP7x7Inq/0EpNyWLr6PPxEW8UV4A=';
 var userToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc=';
@@ -60,7 +63,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create valid Document
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + '/users/1/schemas/1/documents', validDocument1, {json: true})
+    .post(url + ':' + port + '/users/1/schemas/1/documents', validDocument1, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -93,7 +96,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create 2nd valid Docu
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + '/users/1/schemas/1/documents', validDocument2, {json: true})
+    .post(url + ':' + port + '/users/1/schemas/1/documents', validDocument2, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -126,7 +129,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create invalid Docume
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + '/users/1/schemas/1/documents', invalidDocument, {json: true})
+    .post(url + ':' + port + '/users/1/schemas/1/documents', invalidDocument, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -140,7 +143,7 @@ var frisbyUpdateDocumentSuccessfully = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .put(url + '/users/1/schemas/1/documents/' + json.id, validDocument2, {json: true})
+        .put(url + ':' + port + '/users/1/schemas/1/documents/' + json.id, validDocument2, {json: true})
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({
@@ -172,7 +175,7 @@ var frisbyUpdateDocumentFailed = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .put(url + '/users/1/schemas/1/documents/' + json.id, invalidDocument, {json: true})
+        .put(url + ':' + port + '/users/1/schemas/1/documents/' + json.id, invalidDocument, {json: true})
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({
@@ -187,7 +190,7 @@ var frisbyFetchDocument = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .get(url + '/users/1/schemas/1/documents/' + json.id)
+        .get(url + ':' + port + '/users/1/schemas/1/documents/' + json.id)
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({

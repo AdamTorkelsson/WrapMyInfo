@@ -1,8 +1,10 @@
+require('dotenv').load();
 var frisby = require('frisby');
-var url = 'http://localhost:8081';
+var url = 'http://' + process.env.APP_HOST;
+var port = process.env.APP_PORT;
 
 frisby.create('GET /does-not-exist should give 404')
-    .get(url + '/does-not-exist')
+    .get(url + ':' + port + '/does-not-exist')
     .expectStatus(404)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
