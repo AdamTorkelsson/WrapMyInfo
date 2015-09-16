@@ -57,6 +57,9 @@ echo "--- Configure environment variables ---"
 [ ! -f /home/vagrant/wrapmyinfo/.env ] && cp /home/vagrant/wrapmyinfo/.env.vagrant /home/vagrant/wrapmyinfo/.env.vagrant
 nodejs /home/vagrant/wrapmyinfo/bin/build.js
 
+echo "--- Migrate Database --- "
+wrapmyinfo-migrate
+
 echo "--- Generate SSL/TLS key and cert ---"
 mkdir tls
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /home/vagrant/wrapmyinfo/tls/private.key -out /home/vagrant/wrapmyinfo/tls/certificate.crt \

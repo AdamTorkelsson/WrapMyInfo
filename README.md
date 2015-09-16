@@ -36,7 +36,7 @@ To get up and running fast, use https://www.vagrantup.com
 2. vagrant up
 3. vagrant ssh
 4. cd /home/vagrant/wrapmyinfo
-5. wrapmyinfo-migrate
+5. (Optional) wrapmyinfo-seed-db
 6. npm start
 
 ---
