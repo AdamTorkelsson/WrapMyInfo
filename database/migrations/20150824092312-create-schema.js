@@ -3,16 +3,15 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Schemas', {
       id: {
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true
       },
       name: {
         type: Sequelize.STRING
       },
       DeveloperId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Developers'
         }

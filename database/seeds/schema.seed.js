@@ -4,7 +4,7 @@ var utils = require('../../app/utils/utils');
 var obj = {};
 obj.name = 'Schema seeder';
 
-obj.seed = function(){
+obj.seed = function(callback){
     models.Developer.findOne().then(function(developer){
         models.Schema.create({
             name: 'Test',
@@ -38,8 +38,12 @@ obj.seed = function(){
             ],
             maxBlobs: 5,
             maxBlobSize: 10
-        }).then(function(){
+        }).then(function(schema){
             console.log(obj.name + " completed.");
+            callback({
+                name: 'SchemaId',
+                value: schema.id
+            });
         });
     });
 };

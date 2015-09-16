@@ -3,19 +3,18 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Documents', {
       id: {
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true
       },
       SchemaId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         reference: {
           model: 'Schemas'
         }
       },
       UserId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Users'
         }

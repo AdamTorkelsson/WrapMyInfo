@@ -3,19 +3,18 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('GroupSchemas', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true
       },
       GroupId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Groups'
         }
       },
       SchemaId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Schemas'
         }

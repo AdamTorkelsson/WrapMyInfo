@@ -4,7 +4,7 @@ var wmiCrypto = require('../../app/utils/wmi-crypto');
 var obj = {};
 obj.name = 'DeveloperToken seeder';
 
-obj.seed = function(){
+obj.seed = function(callback){
     var token = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc=';
     models.Developer.findOne({
         include: [models.User]
@@ -14,6 +14,10 @@ obj.seed = function(){
             UserId: developer.Users[0].id
         }).then(function(){
             console.log(obj.name + " completed, token=" + token);
+            callback({
+                name: 'UserToken',
+                value: token
+            });
         });
     });
 };

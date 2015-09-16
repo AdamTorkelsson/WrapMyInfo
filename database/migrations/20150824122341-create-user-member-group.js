@@ -3,7 +3,7 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('UserMemberGroups', {
       UserId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         primaryKey: true,
         references: {
@@ -11,7 +11,7 @@ module.exports = {
         }
       },
       GroupId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         primaryKey: true,
         references: {

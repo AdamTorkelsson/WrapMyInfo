@@ -1,5 +1,8 @@
 require('dotenv').load();
 var frisby = require('frisby');
+var seedResults = require('../../../config/seed-results.json');
+var sprintf = require("sprintf-js").sprintf;
+
 var url = 'http://' + process.env.APP_HOST;
 var port = process.env.APP_PORT;
 
@@ -63,20 +66,20 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create valid Document
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + ':' + port + '/users/1/schemas/1/documents', validDocument1, {json: true})
+    .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), validDocument1, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
-        UserId: 1,
-        SchemaId: 1,
+        UserId: seedResults.UserId,
+        SchemaId: seedResults.SchemaId,
         meta: {
             type: "valid"
         }
     })
     .expectJSONTypes({
-        id: Number,
-        UserId: Number,
-        SchemaId: Number,
+        id: String,
+        UserId: String,
+        SchemaId: String,
         meta: Object,
         data: Object,
         createdAt: String,
@@ -96,20 +99,20 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create 2nd valid Docu
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + ':' + port + '/users/1/schemas/1/documents', validDocument2, {json: true})
+    .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), validDocument2, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
-        UserId: 1,
-        SchemaId: 1,
+        UserId: seedResults.UserId,
+        SchemaId: seedResults.SchemaId,
         meta: {
             type: "valid"
         }
     })
     .expectJSONTypes({
-        id: Number,
-        UserId: Number,
-        SchemaId: Number,
+        id: String,
+        UserId: String,
+        SchemaId: String,
         meta: Object,
         data: Object,
         createdAt: String,
@@ -129,7 +132,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create invalid Docume
     .addHeaders({
         Authorization: developerToken
     })
-    .post(url + ':' + port + '/users/1/schemas/1/documents', invalidDocument, {json: true})
+    .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), invalidDocument, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
@@ -143,20 +146,20 @@ var frisbyUpdateDocumentSuccessfully = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .put(url + ':' + port + '/users/1/schemas/1/documents/' + json.id, validDocument2, {json: true})
+        .put(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id, validDocument2, {json: true})
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({
-            UserId: 1,
-            SchemaId: 1,
+            UserId: seedResults.UserId,
+            SchemaId: seedResults.SchemaId,
             meta: {
                 type: "valid"
             }
         })
         .expectJSONTypes({
-            id: Number,
-            UserId: Number,
-            SchemaId: Number,
+            id: String,
+            UserId: String,
+            SchemaId: String,
             meta: Object,
             data: Object,
             createdAt: String,
@@ -175,7 +178,7 @@ var frisbyUpdateDocumentFailed = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .put(url + ':' + port + '/users/1/schemas/1/documents/' + json.id, invalidDocument, {json: true})
+        .put(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id, invalidDocument, {json: true})
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({
@@ -190,17 +193,17 @@ var frisbyFetchDocument = function(json){
         .addHeaders({
             Authorization: developerToken
         })
-        .get(url + ':' + port + '/users/1/schemas/1/documents/' + json.id)
+        .get(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id)
         .expectStatus(200)
         .expectHeaderContains('content-type', 'application/json')
         .expectJSON({
-            UserId: 1,
-            SchemaId: 1
+            UserId: seedResults.UserId,
+            SchemaId: seedResults.SchemaId
         })
         .expectJSONTypes({
-            id: Number,
-            UserId: Number,
-            SchemaId: Number,
+            id: String,
+            UserId: String,
+            SchemaId: String,
             meta: Object,
             data: Object,
             createdAt: String,

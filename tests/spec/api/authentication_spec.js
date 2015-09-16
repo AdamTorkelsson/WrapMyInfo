@@ -1,5 +1,7 @@
 require('dotenv').load();
+var seedResults = require('../../../config/seed-results.json');
 var frisby = require('frisby');
+
 var url = 'http://' + process.env.APP_HOST;
 var port = process.env.APP_PORT;
 
@@ -12,20 +14,20 @@ var invalidUserToken = '4wLWq12fy5uYSASRK0G/OgaHJRyEzF+N+f5Cw/ru9Wc';
 
 frisby.create('POST /auth/developer Get a DeveloperToken, should succeed')
     .post(url + ':' + port + '/auth/developer', {
-        id: 1,
+        id: seedResults.DeveloperId,
         key: validDeveloperKey
     }, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSONTypes({
         token: String,
-        DeveloperId: Number
+        DeveloperId: String
     })
 .toss();
 
 frisby.create('POST /auth/developer Get a DeveloperToken, should fail')
     .post(url + ':' + port + '/auth/developer', {
-        id: 1,
+        id: seedResults.DeveloperId,
         key: invalidDeveloperKey
     }, {json: true})
     .expectStatus(200)
@@ -41,13 +43,13 @@ frisby.create('POST /auth/user Get a UserToken, should succeed')
         Authorization: validDeveloperToken
     })
     .post(url + ':' + port + '/auth/user', {
-        id: 1
+        id: seedResults.UserId
     }, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSONTypes({
         token: String,
-        UserId: Number
+        UserId: String
     })
 .toss();
 
@@ -56,7 +58,7 @@ frisby.create('POST /auth/user Get a UserToken, should fail')
         Authorization: invalidDeveloperToken
     })
     .post(url + ':' + port + '/auth/user', {
-        id: 1
+        id: seedResults.DeveloperId
     }, {json: true})
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
@@ -75,7 +77,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be vali
     .expectJSON({
         authenticated: true,
         status: "Authenticated",
-        id: 1
+        id: seedResults.DeveloperId
     })
 .toss();
 
@@ -102,7 +104,7 @@ frisby.create('GET /auth/status Check if UserToken is valid, should be valid')
     .expectJSON({
         authenticated: true,
         status: "Authenticated",
-        id: 1
+        id: seedResults.UserId
     })
 .toss();
 

@@ -1,6 +1,11 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Schema = sequelize.define('Schema', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
     name: DataTypes.STRING,
     dataRules: DataTypes.JSON,
     maxBlobs: DataTypes.INTEGER,

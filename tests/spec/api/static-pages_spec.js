@@ -1,5 +1,6 @@
 require('dotenv').load();
 var frisby = require('frisby');
+
 var url = 'http://' + process.env.APP_HOST;
 var port = process.env.APP_PORT;
 

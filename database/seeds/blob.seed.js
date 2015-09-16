@@ -4,15 +4,21 @@ var wmiCrypto = require('../../app/utils/wmi-crypto');
 var obj = {};
 obj.name = 'Blob seeder';
 
-obj.seed = function(){
-    models.Blob.create({
-        DocumentId: 1,
-        meta: {
-            hello: 'meta'
-        },
-        blob: wmiCrypto.encryptText("This is blob")
-    }).then(function(){
-        console.log(obj.name + " completed.");
+obj.seed = function(callback){
+    models.Document.findOne().then(function(document){
+        models.Blob.create({
+            DocumentId: document.id,
+            meta: {
+                hello: 'meta'
+            },
+            blob: wmiCrypto.encryptText("This is blob")
+        }).then(function(blob){
+            console.log(obj.name + " completed.");
+            callback({
+                name: 'BlobId',
+                value: blob.id
+            });
+        });
     });
 };
 

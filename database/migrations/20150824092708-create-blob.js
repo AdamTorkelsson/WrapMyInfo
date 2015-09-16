@@ -3,13 +3,12 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Blobs', {
       id: {
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true
       },
       DocumentId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: {
           model: 'Documents'
         }
