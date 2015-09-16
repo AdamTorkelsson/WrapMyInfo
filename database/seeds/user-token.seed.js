@@ -19,6 +19,10 @@ obj.seed = function(callback){
                 value: token
             });
         });
+        models.UserToken.create({
+            token: wmiCrypto.createTokenHash(wmiCrypto.createToken()),
+            UserId: developer.Users[0].id
+        });
     });
 };
 

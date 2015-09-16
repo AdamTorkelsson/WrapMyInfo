@@ -50,9 +50,9 @@ var goNext = function(){
         seed.seed(seedCompleted);
         i++;
         setTimeout(goNext, 200)
+    }else{
+        goNext();
     }
 };
 
 goNext();
-
-console.log('All seeds done.');

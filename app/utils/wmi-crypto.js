@@ -100,12 +100,26 @@ wmiCrypto.decryptAsObject = function(ciphertext){
     return JSON.parse(plaintext);
 };
 
+/**
+ * Returns a pseudorandom base64 encoded string with the bitlength specified in the input.
+ * @param numOfBits
+ * @returns {string|XML}
+ */
+wmiCrypto.randomBase64 = function(numOfBits){
+    return crypto.randomBytes(Math.ceil(numOfBits / 8))
+        .toString('base64');  // convert to base64 format
+        //.replace(/\+/g, '0')  // replace '+' with '0'
+        //.replace(/\//g, '0'); // replace '/' with '0'
+};
+
 wmiCrypto.createToken = function(){
-    return createRandomHash();
+    return this.randomBase64(256);
+    //return createRandomHash();
 };
 
 wmiCrypto.createAccessKey = function(){
-    return encodeURIComponent(createRandomHash()).slice(0, 44);
+    return this.randomBase64(256);
+    //return encodeURIComponent(createRandomHash()).slice(0, 44);
 };
 
 var createRandomHash = function(){

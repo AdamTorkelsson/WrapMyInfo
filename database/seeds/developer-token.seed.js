@@ -17,6 +17,10 @@ obj.seed = function(callback){
                 value: token
             });
         });
+        models.DeveloperToken.create({
+            token: wmiCrypto.createTokenHash(wmiCrypto.createToken()),
+            DeveloperId: developer.id
+        });
     });
 };
 

@@ -15,6 +15,9 @@ obj.seed = function(callback){
             value: developer.id
         });
     });
+    models.Developer.create({
+        key: wmiCrypto.createAccessKeyHash(wmiCrypto.createAccessKey())
+    });
 };
 
 module.exports = obj;
