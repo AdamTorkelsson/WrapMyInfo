@@ -33,8 +33,7 @@ We recommend everyone that uses this software to use postgreSQL and only use ser
 To get up and running fast, use https://www.vagrantup.com
 
 1. git clone git@github.com:AdamTorkelsson/WrapMyInfo.git && cd wrapmyinfo
-2. vagrant up
-3. vagrant ssh
+2. vagrant up && vagrant ssh
 4. cd /home/vagrant/wrapmyinfo
 5. (Optional) wrapmyinfo-seed-db
 6. npm start

@@ -54,7 +54,7 @@ echo "alias wrapmyinfo-seed-db='node /home/vagrant/wrapmyinfo/database/seeds/see
 #echo "alias wrapmyinfo-remigrate-seed='wrapmyinfo-migrate-rollbackall && wrapmyinfo-migrate && wrapmyinfo-seed-db'"
 
 echo "--- Configure environment variables ---"
-[ ! -f /home/vagrant/wrapmyinfo/.env ] && cp /home/vagrant/wrapmyinfo/.env.vagrant /home/vagrant/wrapmyinfo/.env.vagrant
+[ ! -f /home/vagrant/wrapmyinfo/.env ] && cp /home/vagrant/wrapmyinfo/.env.vagrant /home/vagrant/wrapmyinfo/.env
 nodejs /home/vagrant/wrapmyinfo/bin/build.js
 
 echo "--- Migrate Database --- "
