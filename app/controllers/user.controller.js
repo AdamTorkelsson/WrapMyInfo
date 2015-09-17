@@ -1,6 +1,6 @@
 var models = require('../models');
 var wmiCrypto = require("../utils/wmi-crypto");
-var errors = require("../utils/errors");
+var response = require("../utils/response");
 var utils = require("../utils/utils");
 
 var userController = {};
@@ -106,16 +106,12 @@ userController.postDocument = function(req, res){
         }
     }).then(function(schema){
         if(!schema){
-            res.json({
-                status: "Error",
-                message: "Specified Schema can not be found"
-            });
+            res.status(response.error.resourceNotFound(req).httpCode).json(response.error.resourceNotFound(req));
         }
         if(!req.body.data){
-            res.json({
-                status: "Error",
-                message: "No data object provided"
-            });
+            var ret = response.error.malformedRequest(req);
+            ret.description = "No data provided, use request body to submit your data";
+            res.status(ret.httpCode).json(ret);
         }
 
         var document = models.Document.build({
@@ -207,10 +203,7 @@ userController.putDocument = function(req, res){
                     });
                 }
             }else{ // document or schema was falsy
-                res.json({
-                    status: "Error",
-                    message: "Specified Document or Schema can not be found"
-                });
+                res.status(response.error.resourceNotFound(req).httpCode).json(response.error.resourceNotFound(req));
             }
         });
     });
@@ -219,9 +212,7 @@ userController.putDocument = function(req, res){
 userController.deleteDocument = function(req, res){
     verifyDocument(req, res, function(document){
         document.destroy().then(function(){
-            res.json({
-                status: "success"
-            });
+            res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         });
     });
 };
@@ -315,14 +306,17 @@ userController.deleteBlob = function(req, res){
 
 userController.getOwnerGroups = function(req, res){
     //TODO: Implement
+    res.status(response.error.notImplemented.httpCode).json(response.error.notImplemented);
 };
 
 userController.postOwnerGroups = function(req, res){
     //TODO: Implement
+    res.status(response.error.notImplemented.httpCode).json(response.error.notImplemented);
 };
 
 userController.deleteOwnerGroup = function(req, res){
     //TODO: Implement
+    res.status(response.error.notImplemented.httpCode).json(response.error.notImplemented);
 };
 
 userController.getMemberGroups = function(req, res){
@@ -333,10 +327,12 @@ userController.getMemberGroups = function(req, res){
 
 userController.postMemberGroups = function(req, res){
     //TODO: Implement
+    res.status(response.error.notImplemented.httpCode).json(response.error.notImplemented);
 };
 
 userController.deleteMemberGroup = function(req, res){
     //TODO: Implement
+    res.status(response.error.notImplemented.httpCode).json(response.error.notImplemented);
 };
 
 module.exports = userController;

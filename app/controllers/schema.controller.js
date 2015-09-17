@@ -37,9 +37,7 @@ schemaController.getSchema = function(req, res){
         if(schema){
             res.json(schema);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
     });
 };
@@ -59,9 +57,7 @@ schemaController.putSchema = function(req, res){
                 res.json(savedGroup);
             });
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
 
     });
@@ -76,13 +72,9 @@ schemaController.deleteSchema = function(req, res){
         }
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
-            res.json({
-                status: "Success"
-            });
+            res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
     });
 };

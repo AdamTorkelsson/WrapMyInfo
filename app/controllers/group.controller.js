@@ -1,4 +1,5 @@
 var models = require('../models');
+var response = require('../utils/response');
 
 var groupController = {};
 
@@ -33,11 +34,8 @@ groupController.getGroup = function(req, res){
         if(group){
             res.json(group);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.json(response.error.resourceNotFound(req));
         }
-
     });
 };
 
@@ -56,16 +54,12 @@ groupController.putGroup = function(req, res){
                     res.json(savedGroup);
                 });
             }else{
-                res.json({
-                    error: "Not Found"
-                });
+                res.status(response.error.resourceNotFound(req).httpCode).json(response.error.resourceNotFound(req));
             }
 
         });
     }else{
-        res.status(304).json({
-            status: "Not Modified"
-        });
+        res.status(response.error.notModified(req).httpCode).json(response.error.notModified(req));
     }
 };
 
@@ -78,13 +72,9 @@ groupController.deleteGroup = function(req, res){
         }
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
-            res.json({
-                status: "Success"
-            });
+            res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
 
     });
@@ -134,13 +124,9 @@ groupController.deleteGroupMember = function(req, res){
         }
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
-            res.json({
-                status: "Success"
-            });
+            res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
     });
 };
@@ -189,13 +175,9 @@ groupController.deleteGroupOwner = function(req, res){
         }
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
-            res.json({
-                status: "Success"
-            });
+            res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         }else{
-            res.json({
-                error: "Not Found"
-            });
+            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
         }
     });
 };

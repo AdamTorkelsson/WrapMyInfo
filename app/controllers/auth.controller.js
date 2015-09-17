@@ -1,5 +1,5 @@
 var models = require('../models');
-var errors = require('../utils/errors');
+var response = require('../utils/response');
 var wmiCrypto = require("../utils/wmi-crypto");
 
 var authController = {};
@@ -23,23 +23,18 @@ authController.postDeveloperToken = function(req, res){
                     res.json(developerToken);
                 });
             }else{
-                res.json({
-                    error: "Not found",
-                    solution: "Get a valid key"
-                });
+                res.json(response.error.developerKeyNotFound);
             }
         });
     }else{
-        res.json({
-            error: "Not authenticated"
-        });
+        res.json(response.error.developerKeyMissingCredentials);
     }
 };
 
 authController.postUserToken = function(req, res){
     var developer = req.authenticated.entity;
     var userId = req.body.id;
-    if(developer && userId){
+    if(developer && userId && req.authenticated.type === 'developer'){
         models.User.findOne({
             where: {
                 id: userId,
@@ -56,16 +51,11 @@ authController.postUserToken = function(req, res){
                     res.json(userToken);
                 });
             }else{
-                res.json({
-                    error: "Not found",
-                    solution: "Get a valid key"
-                });
+                res.json(response.error.userTokenAuthenticationFailed);
             }
         });
     }else{
-        res.json({
-            error: "Not authenticated"
-        });
+        res.json(response.error.userTokenNotAuthenticated);
     }
 };
 
@@ -73,16 +63,12 @@ authController.getAuthStatus = function (req, res) {
     var entity = req.authenticated.entity;
 
     if(entity){
-        res.json({
-            authenticated: true,
-            status: "Authenticated",
-            id: entity.id
-        });
+        var ret = response.success.authenticated;
+        ret.id = entity.id;
+        ret.type = entity.type;
+        res.json(ret);
     }else{
-        res.json({
-            authenticated: false,
-            status: "Unauthenticated"
-        });
+        res.json(response.success.notAuthenticated);
     }
 };
 
