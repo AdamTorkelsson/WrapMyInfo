@@ -67,7 +67,7 @@ userController.getSchemas = function(req, res){
             }
             res.json(schemas);
         }else{
-            res.json(errors.noResourceFound("User"));
+            res.json(response.error.resourceNotFound(req));
         }
 
         //TODO: Make sure no duplicates is delivered

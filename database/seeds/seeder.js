@@ -51,7 +51,7 @@ var goNext = function(){
         i++;
         setTimeout(goNext, 200)
     }else{
-        goNext();
+        //goNext();
     }
 };
 
