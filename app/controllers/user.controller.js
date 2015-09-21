@@ -63,7 +63,9 @@ userController.getSchemas = function(req, res){
             var schemas = [];
             for(var i = 0; i < user.Documents.length; i++){
                 var schema = user.Documents[i].Schema;
-                schemas.push(schema);
+                if(!utils.arrayContainsObjectWithId(schemas, schema.id)){
+                    schemas.push(schema);
+                }
             }
             res.json(schemas);
         }else{

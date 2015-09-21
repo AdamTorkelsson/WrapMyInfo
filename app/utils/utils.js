@@ -26,4 +26,13 @@ utils.checkDocumentAgainstSchema = function(document, schema){
     return true;
 };
 
+utils.arrayContainsObjectWithId = function(arr, id){
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].id === id) {
+            return true;
+        }
+    }
+    return false;
+};
+
 module.exports = utils;
