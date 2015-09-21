@@ -33,8 +33,8 @@ frisby.create('POST /auth/developer Get a DeveloperToken, should fail')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
-        error: "Not found",
-        solution: "Get a valid key"
+        status: "Error",
+        message: "Key not found"
     })
 .toss();
 
@@ -63,7 +63,9 @@ frisby.create('POST /auth/user Get a UserToken, should fail')
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
-        error: "Not authenticated"
+        status: "Error",
+        httpCode: 400,
+        message: "Access denied or missing UserId"
     })
 .toss();
 
@@ -90,7 +92,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be inva
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
         authenticated: false,
-        status: "Unauthenticated"
+        status: "Not authenticated"
     })
 .toss();
 
@@ -117,6 +119,6 @@ frisby.create('GET /auth/status Check if UserToken is valid, should be invalid')
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
         authenticated: false,
-        status: "Unauthenticated"
+        status: "Not authenticated"
     })
 .toss();

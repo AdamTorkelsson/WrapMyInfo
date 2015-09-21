@@ -9,8 +9,9 @@ frisby.create('GET /does-not-exist should give 404')
     .expectStatus(404)
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
-        error: 404,
-        description: "Requested page could not be found",
+        status: "Error",
+        httpCode: 404,
+        message: "Requested page could not be found",
         path: "/does-not-exist",
         method: "GET"
     })
