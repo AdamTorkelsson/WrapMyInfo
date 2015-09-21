@@ -211,7 +211,7 @@ userController.putDocument = function(req, res){
 
 userController.deleteDocument = function(req, res){
     verifyDocument(req, res, function(document){
-        document.destroy().then(function(){
+        document.destroy({force: req.query.hardDelete}).then(function(){
             res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
         });
     });
@@ -294,10 +294,8 @@ userController.deleteBlob = function(req, res){
                     error: "The specified Document is not the owner of this Blob."
                 }); //TODO: Make error messages better.
             }else{
-                blob.destroy().then(function(){
-                    res.json({
-                        status: "success"
-                    });
+                blob.destroy({force: req.query.hardDelete}).then(function(){
+                    res.json(response.success.resourceSuccessfullyDeleted);
                 });
             }
         });

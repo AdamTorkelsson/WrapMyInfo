@@ -1,7 +1,7 @@
-var errors = require('../utils/errors');
+var response = require('../utils/response');
 
 var notFound = function(req, res){
-    res.status(404).json(errors.notFound(req));
+    res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
 };
 
 module.exports = notFound;

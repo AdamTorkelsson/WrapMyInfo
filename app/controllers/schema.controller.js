@@ -69,7 +69,8 @@ schemaController.deleteSchema = function(req, res){
         where:{
             id: req.params.schema,
             DeveloperId: developer.id
-        }
+        },
+        force: req.query.hardDelete
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
             res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);

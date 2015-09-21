@@ -69,7 +69,8 @@ groupController.deleteGroup = function(req, res){
         where: {
             id: req.params.group,
             DeveloperId: developer.id
-        }
+        },
+        force: req.query.hardDelete
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
             res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
@@ -121,7 +122,8 @@ groupController.deleteGroupMember = function(req, res){
         where: {
             UserId: req.params.user,
             GroupId: req.params.group
-        }
+        },
+        force: req.query.hardDelete
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
             res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
@@ -172,7 +174,8 @@ groupController.deleteGroupOwner = function(req, res){
         where: {
             UserId: req.params.user,
             GroupId: req.params.group
-        }
+        },
+        force: req.query.hardDelete
     }).then(function(numDestroyed){
         if(0 < numDestroyed){
             res.status(response.success.resourceSuccessfullyDeleted.httpCode).json(response.success.resourceSuccessfullyDeleted);
