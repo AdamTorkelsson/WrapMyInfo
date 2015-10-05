@@ -48,28 +48,36 @@ Architecture Overview Image - Coming soon
 The main resources of this backend is the Schema, Document, Blob, Users and Groups. You decide how the data should be stored within your Documents using Schemas, this includes how the data should be structured, what it should consist of and if the Documents shall have Blobs (large files) or not.  
 
 **Hospital visit example:** 
-Define a Schema (step 1) after what shall be included in a hospital visit. Then, Create a Document (step 2) after that Schema and start to store a users information within it (step 3). As a hospital visit may include large emr pictures you have defined your hospital visit Schema to make the Document have several Blob "children" in which you easily can store these pictures. 
-This design has been chosen to make it possible for the backend to verify and maintain the database for you while being dynamic and possible to use for many different types of softwares.  Documents and Blobs does as well have meta data stored to help you identify them. 
+Define a Schema (step 1) after what shall be included in a hospital visit. Then, Create a Document (step 2) after that Schema and start to store a users information within it (step 3). As a hospital visit may include large emr pictures you have defined your hospital visit Schema to make the Document have several Blob "children" in which you easily can store these pictures. This design has been chosen to make it possible for the backend to verify and maintain the database for you while being dynamic and possible to use for many different types of softwares.  Documents and Blobs does as well have meta data stored to help you identify them. 
 
 Primarly this software is built to work together with your own backend and not on its own. It is built in a way that we hope enable as many as possible to be able to integrate with it and gain value from it. The things your own backend needs to take care of is if you have more than one type of user and these users needs to gain access to each others information. This is done with groups but the functionality needs your backend to verify which users should be permitted to become owners of groups. You moreover need a backend to handle login and update tokens and you need to distribute the tokens to the right user. You should therefor, in your own backend, store the developerID, developerKey and all your users unique UserID. It is however important to never transfer user sensetive information through your own backend since this would require you to keep as a high security level on your own backend.   
 
-A short description of the main resources:
-* A Schema contains the description of a documents data, it is used to verify data and maintain consistensy in the stored information.
-* A Document consist of data and meta. 
-    * The data will be stored encrypted and is the location were you should store all sensetive information about your users. For larger files it is recommended to use blobs instead. 
-    * The Meta is used to identify, organize and find documents faster with a lower process cost.
-* To store large files BLOBs are used.  A BLOB consist of binary data that is encrypted and meta data that identifies it, blobs is linked to documents which is their identifier. 
-* Groups are used to handle permission to information between users. A group correlates to one or several schemas. The Schemas identifies which documents the owners has access to. All owners of a group therefore has access to all the documents of the members which correlates to the schemas of which the groups has ownership rights to. 
-* Users are identified by their UserID which is given as a response when users are created.
-* Developers are identified by their DeveloperID and DeveloperKey
-* For high level calls a Developer Token is required, these has a lifespan of 24 hours and are created with the DeveloperID and DeveloperKey
-* For low level calls a user token is required, these has a lifespan of 24 hours and are created with the UserID and Developer Token
+## OVERVIEW 
+As seen in the image the main resources is the Schema, Document, Blob, Users and Groups. 
+* A Schema contains the structure of the document data. It is used to verify data and maintain consistency in the stored information.
+* A Document consist of information that is stored as data(encrypted) and meta(not encrypted). 
+    * The data is were you store all sensitive information about your users. This information will always be stored encrypted and secure. For larger files it is recommended to use blobs instead. 
+    * The Meta is used to identify, organize and find documents faster without going through sensitive information.
+* To store large files BLOBs are used. A BLOB consist of binary data that is encrypted and meta data that identifies it. BLOBs are children to documents. 
+* Groups are used to handle permission to information between users. A group correlates to one or several Schemas. 
+    * The Schemas identifies which documents the owners has access to. 
+    * Owners can list, view, create, edit and delete members Documents.
+    * Members are the ones sharing their information to the owners. A user can both be a member and a owner. 
+* Users are identified by their UserID which is given as a response when users are created. 
+* Developers are identified by their DeveloperID and DeveloperKey.
+* For permission changes and structural changes a Developer Token is required, these has a lifespan of 24 hours and are created with the DeveloperID and DeveloperKey
+* For other calls a user token is required, these has a lifespan of 24 hours and are created with the UserID and DeveloperToken
 
-### Logs 
-All accesses calls and logins will be logged and saved.
+##### EXAMPLE HOSPITAL VISIT
+During development: 
+Define a Schema (step 1) after what shall be included in a hospital visit. This could for example be structured to store information about a visit to a Physician and should therefore include information such as 'PhysicianName','PatientJournal','Hospital','Disease'. Develop your frontend software to upload a json structured (step 2) as described in your Schema to our backend.
+
+In production
+A user visit the hospital and inputs data about his/her visit. In the software a JSON is created that correlates to the previously created Schema (step 3). The information is then uploaded directly to the this backend through a secure TLS connection. In the backend the information is thereafter validated by the predefined Schema which was created in step 1, encrypted and safely stored until requested by a user or owner with the correct permission. 
 
 ##### The API will be divided into:
 + Standard Response messages
++ Logs
 + Auth/Tokens
 + Schemas
 + Documents
@@ -80,152 +88,310 @@ All accesses calls and logins will be logged and saved.
     + Members
 + Search
 
-## Response messages
+## STANDARD RESPONSE MESSAGES
 
-Coming Soon
+### ERROR MESSAGES
 
-## Tokens
-Two different kind of tokens exist, Developer token and the user token. The developer token is unique for each software and the user token is unique for each user of a software. 
+
+##### RESOURCE NOT FOUND
+```javascript
+        status: "Error",
+        errorCode: 0,
+        httpCode: 404,
+        message: "Resource not found",
+        description: "",
+        path: req.url,
+        method: req.method
+```
+
+##### NOT FOUND
+```javascript
+        status: "Error",
+        errorCode: 0,
+        httpCode: 404,
+        message: 'Requested page could not be found',
+        description: "",
+        path: req.url,
+        method: req.method
+    }
+};
+```
+##### NOT MODIFIED
+ ```javascript
+        status: "Error",
+        errorCode: 0,
+        httpCode: 304,
+        message: 'Not modified',
+        description: "",
+        path: req.url,
+        method: req.method
+ ```
+
+##### MALFORMED REQUEST
+```javascript
+        status: "Error",
+        errorCode: 0,
+        httpCode: 400,
+        message: "Malformed request, missing important information",
+        description: "",
+        path: req.url,
+        method: req.method
+    }
+};
+```
+
+##### ACCESS DENIED
+```javascript
+        status: "Error",
+        errorCode: 0,
+        httpCode: 403,
+        message: "Access denied. You do not have permission to access this resource.",
+        description: "",
+        path: req.url,
+        method: req.method
+```
+
+##### DEVELOPER KEY NOT FOUND 
+```javascript
+    status: "Error",
+    errorCode: 0,
+    httpCode: 404,
+    message: "Key not found",
+    description: ""
+```
+
+
+##### DEVELOPER KEY MISSING CREDENTIALS
+```javascript
+    status: "Error",
+    errorCode: 0,
+    httpCode: 400,
+    message: "Access denied, missing DeveloperId or DeveloperKey",
+    description: ""
+```
+
+##### USER AUTHENTICATION FAILED 
+```javascript
+    status: "Error",
+    errorCode: 0,
+    httpCode: 401,
+    message: "Authentication failed, you do not have permission to create token for this User",
+    description: ""
+```
+
+##### USER NOT AUTHENTICATED
+```javascript
+    status: "Error",
+    errorCode: 0,
+    httpCode: 400,
+    message: "Access denied or missing UserId",
+    description: ""
+```
+
+
+##### NOT IMPLEMENTED 
+```javascript
+    status: "Error",
+    errorCode: 0,
+    httpCode: 501,
+    message: "Not yet implemented",
+    description: ""
+```
+
+
+### SUCCESS
+
+##### AUTHENTICATED 
+```javascript
+    status: "Authenticated",
+    authenticated: true,
+    id: null,
+    type: null
+```
+
+##### NOT AUTHENTICATED
+```javascript
+    status: "Not authenticated",
+    authenticated: false
+```
+
+##### RESOURCE SUCCESSFULLY DELETED
+```javascript
+    status: "Success",
+    successCode: 0,
+    httpCode: 200,
+    message: "Resource was successfully deleted"
+```
+
+
+## LOGS 
+All calls are logged and saved. These will be accessible through an API call with the DeveloperToken. The logs consist of the URL, requested resources, if it was approved and the ID of the user/developer. 
+
+## TOKENS
+Tokens are used to make API requests to the backend. Two different kind of tokens exist, the DeveloperToken and the UserToken. The DeveloperToken is unique for each software and the UserToken is unique for each user of the software. 
 
 ### CREATE A DEVELOPER TOKEN
+The DeveloperToken needs to be attached on all permission changes and structural changes. 
 ```javascript
-URL: BASE_URL + /auth/:developer
+URL: BASE_URL + '/auth/'
 Method: [POST]
-Content-Type: application/json 
+Content-Type: application/json
 Authorization: <>
-body*
+```
+**body**
+```javascript
 {
 DeveloperID: 'gagaVASNk',
 DeveloperKey: 'faafasvKSj'
 }
-
 ```
 **answer:**
 ```javascript
 {
-  'token': 'eybsfmAvSao...'
+  token: 'eybsfmAvSao...'
 }
 ```
 
 ### CREATE A USER TOKEN
+The UserToken needs to be attached on all user specific calls and is unique for each user.
 ```javascript
-URL: BASE_URL + /auth/
+URL: BASE_URL + '/auth/'
 Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
 **body**
 ```javascript
 {
-  'userID': 'nfalnaSNama...'
+  userID: 'nfalnaSNama...'
 }
 ```
 
 **answer:**
 ```javascript
 {
-  'token': 'eybsSKvSao...'
+  token: 'eybsSKvSao...'
 }
 ```
 
-## Schemas 
-A Schema is the description of documents, they include standardvalue, type and name. Schemas are built both to validate the data stored in the Documents and organize them. They moreover enable you as a developer to prevent uncessary searches. 
+### CHECK IF A USER IS LOGGED IN 
+Check if a UserToken is valid or expired. The standard expiration time is set to 24 hours.
 
-These datatypes are supported as schema types: 
+```javascript
+URL: BASE_URL + '/auth/status/'
+Method: [GET]
+Content-Type: application/json
+Authorization: <DeveloperID, UserToken> or <DeveloperID, DeveloperToken> 
+```
 
-integer, float, Strings, boolean, 
-date - Standard ISO 8601 format.time
-JSON (JSON can not be indexed, they can however still be multilevel) 
+## SCHEMAS 
+A Schema defines the structure of Documents. As a developer you decide what the standardvalue/initial value should be, what type it is and the name of the key. Schemas are required to both validate stored data in Documents and to keep them organized.
+
+These datatypes are supported as Schema types: 
++ String 
++ Number 
++ boolean 
++ function 
++ Object (JSON , JSONArray, null...)
+    + A JSON will not be multilevel indexed, they can however still be multilevel 
+
+In the schema you will moreover decide if it should be possible to store Blobs for the users and the number & maxsize of these Blobs. 
+
++ name: patientSchema
++ maxBlobs: 4
++ maxBlobSize: 100
 
 #### CREATE A SCHEMA
-Create a new schema that describes document content. 
+Create a new schema that structures document content. 
 ```javascript
-URL: BASE_URL + /schemas
-Method: [CREATE]
+URL: BASE_URL + '/schemas/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
+
 **body structure/example**
 ```javascript
 {
-  'description': 'patientSchema',
-   'data': [
+    name: 'patientSchema',
+    maxBlobs: 4,
+    maxBlobSize: 100,
+    dataRules: [
       {
-      'name': 'physician',
-        'type': 'string'
-        'standardvalue': 'null'
-      },
-      {
-        'name': 'birth_date',
-        'type': ‘date',
-        'standardvalue': 'null'
+      name: 'patient',
+        type: 'String'
+        standardvalue: 'null'
       },
             {
-        'name': 'patient_journal',
-        'type': 'json',
-        'standardvalue': 'null'
+        name: 'patient_journal',
+        type: 'object',
+        standardvalue: 'null'
       },
       {
-        'name': 'disease',
-        'type': 'string',
-        'standardvalue': 'none'
+        name: 'disease',
+        type: 'String',
+        standardvalue: 'none'
       },
       {
-        'name': 'date_visit',
-        'type': 'int',
-        'standardvalue': '-1'
+        name: 'date_visit',
+        type: 'number',
+        standardvalue: '-1'
       }
     ]
 }
+
 ```
 **answer**
 ```javascript
 {
-    SchemaID: 'dvasknaJH'
+    SchemaID: 'dvasknaJH',
+    Schema: { 
+    //the schema you created
+    }
 }
 ```
-#### UPDATE AN EXISTING SCHEMA
-Update an existing schema that describes document content. 
 
+#### UPDATE AN EXISTING SCHEMA - This can change existing user data/documents as described below! 
+Updates an existing schema that describes document content. This will affect all previously created documents linked to this Schema. Previously created values will change: 
++ If a standardvalue is changed all documents with the old standardvalue will be **changed into the new one**
++ If the type is changed this will affects all Documents with validated by this Schema. **ALL previously stored values with the previous type will have its value changed** into the new standardvalue and type. 
++ If a key is changed all old keys will change into the new key. 
++ If a key is deleted all Documents with this SchemaID will delete this key and any previously stored value. 
 
-TYPE IF changed standardvalue will be set to all users documents 
-StandardValue : all those with old standardvalue will get new standardvalue
-name: All id 
-
+You only need to include those fields that you want to change and the presentKey as identifier. 
 ```javascript
-URL: BASE_URL + /schemas/Schema/:Schema
+URL: BASE_URL + '/schemas/:schema'
 Method: [PUT]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
 **body structure/example**
 ```javascript
-{
-  ‘description’: ‘patientSchema’,
-   ‘fields’: [
+    {
+    name: 'patientSchema',
+    dataRules: [
       {
-      'oldKey': 'Physician
-      ‘Key’: ‘KneePhysician’,
-        ‘type’: ‘string’,
-        'standardvalue': ''
+        presentKey: 'patient',
+        newKey: 'KneePhysicianID',
+        type: 'number',
+        standardvalue: -1
       },
-      {
-        ‘name’: ‘birth_date’,
-        ‘type’: ‘year’,
-        'standardvalue': '-1'
+       {
+        presentKey: 'patient_journal',
+        delete: true
       }
-    ]
+    ],
 }
 ```
 #### LIST ALL EXISTING SCHEMAS
 List all the Schemas you have created.
 ```javascript
-URL: BASE_URL + /schemas
+URL: BASE_URL + '/schemas/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 **answer:**
 ```javascript
@@ -233,12 +399,12 @@ Coming soon
 ```
 
 #### GET A SCHEMA
-Get a single Schema you previously have created.
+Get a single Schema you previously have created. 
 ```javascript
-URL: BASE_URL + /schemas/Schema/:Schema
+URL: BASE_URL + '/schemas/' + :schema
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken> or <DeveloperID,UserToken>
+Authorization: <DeveloperID, DeveloperToken> or <DeveloperID, UserToken>
 ```
 
 **answer:**
@@ -246,41 +412,44 @@ Authorization: <DeveloperID,DeveloperToken> or <DeveloperID,UserToken>
 Coming soon
 ```
 #### DELETE AN EXISTING SCHEMA 
-Delete a schema you have created, all relating documents will be deleted as well. 
+Delete a Schema you have created, all related documents will be deleted as well. 
 ```javascript
-URL: BASE_URL + /schemas/Schema/:Schema
+URL: BASE_URL + '/schemas/' + :schema
 Method: [DELETE]
 Content-Type: application/json 
-Authorization:  <DeveloperID,DeveloperToken>
+Authorization:  <DeveloperID, DeveloperToken>
 ```
+
 **answer:**
 ```javascript
 Coming soon
 ```
 
-## Documents 
-Documents are meant to store all information and are defined by their correlating schemas
+## DOCUMENTS
+Documents is were you store all information. The data stored within them is validated and structured by their correlating schemas. 
+
 #### CREATE A DOCUMENT
+Create a new Document for a specific user for a specific Schema. To create a Document a JSON with meta and data needs to be posted as body(as seen below). All information that is or can be sensitive should be stored within the data as this is encrypted in rest. Within the meta should information that is not sensitive be stored. The meta is not encrypted to enable you to easier identify & search for Documents. 
+
 ```javascript
-URL: BASE_URL + /User/:User/Schema/:Schema
-Method: [CREATE]
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperID,UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 
 **body example/structure:**
 ```javascript
 {
-'meta': {
-    'hospital': 'Storsjukhuset',
-    'physician': 'Adam Torkelsson',
+meta: {
+    hospital: 'Storsjukhuset',
+    physician: 'Adam Torkelsson',
   }
-  'body': {
-   'physician': 'Adam Torkelsson',
-   'patient': 'Johanna Jonsson',
-    'disease': 'Korsbandet avdraget',
-    'date_visit': '2014-01-13 11:29:22',
-    'patient_journal': 'The patient seems to...'
+  data: {
+    patient: 'Johanna Jonsson',
+    disease: 'Korsbandet avdraget',
+    date_visit: '2014-01-13 11:29:22',
+    patient_journal: 'The patient seems to...'
   }
 }
 ```
@@ -288,28 +457,29 @@ Authorization: <DeveloperID,UserToken>
 **answer:**
 ```javascript
 {
-    DocumentID: 'smamaeLKAS'
+    id: 'smamaeLKAS'
 }
 ```
-#### GET USER DOCUMENTS FOR A SPECIFIC SCHEMA
-Get all documents that correlates to a Schema for a user.
+#### GET ALL DOCUMENTS OF A USER FOR A SPECIFIC SCHEMA
+Get all documents that corellates to a Schema for a user.
 ```javascript
-URL: BASE_URL + /User/:user/Schema/:Schema
+URL: BASE_URL + '/users/' + :user '/schemas/' + :schema + '/documents/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperID,UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 **answer:**
 ```javascript
 Coming soon
 ```
 
+#### GET A SPECIFIC DOCUMENT WITH ITS ID
 Get a single document, by identifing it with its ID.
 ```javascript
-URL: BASE_URL + /User/:User/Schema/:Schema/:document
+URL: BASE_URL + '/users/' + :user '/schemas/' + :schema '/documents/' + :document
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperID,UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 **answer:**
 ```javascript
@@ -319,10 +489,10 @@ Coming soon
 #### LIST ALL SCHEMAS A USER HAS CORRELATING DOCUMENTS TO
 Get a list of all schemas that a user has created correlating document(s) to.
 ```javascript
-URL: BASE_URL + /User/:User/schemaList
+URL: BASE_URL + '/user/' + :user + '/schemas/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperID,UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 **answer:**
 ```javascript
@@ -330,17 +500,20 @@ Coming soon
 ```
 
 #### UPDATE A USERS EXISTING DOCUMENT
-Update an existing document with new information or hange previously created information.
+Update an existing document with new information or change previously created information.
 ```javascript
-URL: BASE_URL + /User/:User/Schema/:Schema/:document
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document
 Method: [PUT]
 Content-Type: application/json 
-Authorization: <DeveloperID,UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 
 **body:**
 ```javascript
-Coming soon
+{
+meta: {},
+data: {} 
+}
 ```
 
 **answer:**
@@ -350,40 +523,80 @@ Coming soon
 #### DELETE A USERS DOCUMENT
 Delete a created document
 ```javascript
-URL: BASE_URL + /User/Schema/:Schema/:document
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document
 Method: [DELETE]
 Content-Type: application/json 
-Authorization:  <DeveloperID,UserToken>
+Authorization:  <DeveloperID, UserToken>
 ```
 
 ### BLOB 
-Blobs are children to document, all sensetive information of them should exist in their parents documents data. Blobs exist of meta data and binary data. The binary data is encrypted while the meta data is left unencrypted. 
+In BLOBs it is possible to encrypt and store large files. A BLOB consist of meta and filebin. The filebin is the file and should be in a base64 format, this will be encrypted in rest. Meta will not be encrypted and is used to identify them. BLOBs are children to documents. If you want to store sensitive information about the files this should be stored in the Document data.  
 
-#### CREATE
-/User/Schema/:Schema/:document/blob/:blob
-Blobs 
+
+#### CREATE A NEW BLOB
 ```javascript
-Coming soon
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document + '/blobs'
+Method: [POST]
+Content-Type: application/json 
+Authorization:  <DeveloperID,UserToken>
 ```
-#### PUT
-/User/Schema/:Schema/:document/blob/:blob
+**body structure**
+```javascript
+{
+    meta: {
+        imageNr: 14
+    },
+    filebin: 'adavaeSMAFKA..'
+}
+```
+#### CHANGE AN EXISTING BLOB
+```javascript
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document + '/blobs/' + :blob
+Method: [PUT]
+Content-Type: application/json 
+Authorization:  <DeveloperID, UserToken>
+```
 
-#### LIST
-/User/Schema/:Schema/:document/blob
+**body structure** 
+```javascript
+{
+    filebin: {avaSK..}
+}
+```
 
-#### GET
-/User/Schema/:Schema/:document/blob/:blob
+#### LIST ALL BLOBS OF A DOCUMENT
+```javascript
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document + '/blobs/'
+Method: [GET]
+Content-Type: application/json 
+Authorization:  <DeveloperID, UserToken>
+```
 
-#### DELETE
-/User/Schema/:Schema/:document/blob/:blob
+#### GET A BLOB
+```javascript
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document + '/blobs/' +:blob
+Method: [GET]
+Content-Type: application/json 
+Authorization:  <DeveloperID, UserToken>
+```
 
-## Users 
+#### DELETE A BLOB
+```javascript
+URL: BASE_URL + '/users/' + :user + '/schemas/' + :schema + '/documents/' + :document + '/blobs/' + :blob
+Method: [DELETE]
+Content-Type: application/json 
+Authorization:  <DeveloperID, UserToken>
+```
+
+## USERS 
+Users can only be created and modified by you as a developer. Every users stored information is from the beginning separated from other users. To share information between users groups are used.
+
 #### CREATE A NEW USER
 ```javascript
-URL: BASE_URL + /users
-Method: [CREATE]
+URL: BASE_URL + '/users/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperID,DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
 **body:**
@@ -394,234 +607,346 @@ Coming soon
 **answer:**
 ```javascript
 {
-    'userID': 'nfalnaSNama..',
-    'userToken': 'avasanS...'
+    userID: 'nfalnaSNama..'
 }
 ```
 
 #### LIST ALL USERS
-Get a list of all users
+Get a list of all users.
 ```javascript
-URL: BASE_URL + /users
+URL: BASE_URL + '/users/'
 Method: [GET]
 Content-Type: application/json 
-Authorization:  <DeveloperID,DeveloperToken>
+Authorization:  <DeveloperID, DeveloperToken>
 ```
 
 #### DELETE A USER
-Delete a user
+Delete a user, all the users previously stored information will be deleted as well. 
 ```javascript
-URL: BASE_URL + /users/:User
+URL: BASE_URL + '/users/' + :user
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
-## Groups
+## GROUPS & PERMISSIONS
+Groups handle permission to specific Documents and BLOBs between users. A group consist of members and owners. Members of a group has given permission to owners to access their information. The Documents and BLOBs that permission is given to is defined by the SchemaIDs of the Group. 
+
 #### CREATE A NEW GROUP
 Create a group
 ```javascript
-URL: BASE_URL + /groups
-Method: [CREATE]
+URL: BASE_URL + '/groups/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
 **body:**
 ```javascript
 Coming soon
 ```
-#### LIST ALL USERS IN A GROUP
+#### LIST ALL GROUPS
 ```javascript
-URL: BASE_URL + /groups
+URL: BASE_URL + '/groups/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
+```
+**answer:**
+```javascript
+Coming soon
 ```
 
-**answer:**
+#### LIST ALL OWNERS OF A GROUP
 ```javascript
-Coming soon
-```
-#### GET * TEST* 
-```javascript
-URL: BASE_URL + /groups/Group/:GroupID
+URL: BASE_URL +  '/groups/' + :group + '/owners/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, UserToken> (if owner) 
 ```
-**answer:**
+#### LIST ALL MEMBERS OF A GROUP
 ```javascript
-Coming soon
+URL: BASE_URL +  /groups/:group/members
+Method: [GET]
+Content-Type: application/json 
+Authorization:  <DeveloperID, UserToken> (if owner) 
 ```
+
 #### DELETE A GROUP
 ```javascript
-URL: BASE_URL + /groups/Group/:GroupID
+URL: BASE_URL + '/groups/' + :group
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 **answer:**
 ```javascript
 Coming soon
 ```
 
-#### Owners
-A group owner can access all shared documents by its members, a group can have one or many owners.
+#### OWNERS
+A group owner can access all the Documents shared by the members in the group. A group can have one or many owners.
 
-##### MAKE A USER OWNER OF A GROUP *TEST* 
-Create group and add a user as owner of a group
+##### GIVE A USER OWNER PERMISSION
+Add a user as owner of a group and give them permission to access the members Documents.
 ```javascript
-URL: BASE_URL +  /User/:UserID/ownerGroups/:GroupID
-Method: [CREATE]
+URL: BASE_URL +  '/groups/' + :group + '/owners/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
-##### ADD A USER AS OWNER OF AN EXISTING GROUP
-Add a user as owner of an existing group
+
+**body**
 ```javascript
-URL: BASE_URL +  /User/:UserID/ownerGroups/:GroupID
-Method: [PUT]
-Content-Type: application/json 
-Authorization: <DeveloperToken>
+{
+    userID: 'VasvMSA..'
+}
 ```
+
+
+
 ##### LIST ALL GROUPS A USER IS OWNER IN
 Get all groups a user is owner in. 
 ```javascript
-URL: BASE_URL +  /User/:UserID/ownerGroups
+URL: BASE_URL +  '/users/' + :user + '/ownergroups/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 ##### GET GROUP INFORMATION
-Get information about a group and which Schemas it has. 
+Get information about a group and which Schemas it gives access to. 
 ```javascript
-URL: BASE_URL +  /User/:UserID/ownerGroups/:Group
+URL: BASE_URL +  '/users/' + :user + '/ownergroups/' + :group
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
-##### DELETE A GROUP
-Remove a user as owner from a group
+##### REMOVE A OWNERS PERMISSION
+Remove a user as owner from a group.
 ```javascript
-URL: BASE_URL +  /User/:UserID/ownerGroups/:Group
+URL: BASE_URL +  '/groups/' + :group + '/owners/' + :user
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <DeveloperToken>
+Authorization: <DeveloperID, DeveloperToken>
 ```
 
-##### Access member data
- /User/:UserID/ownerGroups/:Group/User/:UserID/
+##### ACCESS MEMBERS DATA
+A owner access members data in the same way as the user.
 ```javascript
-Coming soon
+URL: BASE_URL +  '/users/' + :memberuser + '/schemas/' + :schema + '/documents/' + :document
+Method: [GET]
+Content-Type: application/json 
+Authorization: <DeveloperID, UserToken>
 ```
 
-#### Members 
-A member of a group is the ones which shares their information to the owners of the group. 
+#### MEMBERS 
+A member of a group is a user which share information to the owner/owners of the group. 
 
 #### ADD USER AS A MEMBER TO AN EXISTING GROUP
-Add user as a member to an existing group
+Add user as a member to an existing group.
 ```javascript
-URL: BASE_URL +  /User/:UserID/memberGroups/:GroupID  
-Method: [PUT]
+URL: BASE_URL +  '/groups/' + :group + '/members/'
+Method: [POST]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 #### LIST ALL GROUPS A USER IS MEMBER IN 
-Get all groups a user is member in
+Get all the groups that a user is member in.
 ```javascript
-URL: BASE_URL +  /User/:UserID/memberGroups/
+URL: BASE_URL +  '/users/' + :user + '/membergroups/'
 Method: [GET]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 #### REMOVE A USERS MEMBERSHIP
-Removes a user from a group
+Removes a user from a group.
 ```javascript
-URL: BASE_URL +  /User/:UserID/memberGroups/:GroupID  
+URL: BASE_URL +  '/groups/' + :group + '/members/' + :user
 Method: [DELETE]
 Content-Type: application/json 
-Authorization: <UserToken>
+Authorization: <DeveloperID, UserToken>
 ```
 
 ## SEARCH
-To search over data a JSON as seen below is posted to the backend. A search can be done over Documents and/or Blobs. It can be done over the meta data or/and the encrypted information. Since it is costly to do large searches over many files with encrypted information this should be avoided to as large extent as possible. How the search should be done is included in the JSON posted as seen below.
-A search consist of 
-+ Span
-+ Options
-+ Query
+To avoid costly searches over encrypted information a layered approach is used, where each level limits the amount of encrypted information that needs to be decrypted. Searches can be made over: 
++ Documents
+    + Meta
+    + Data
++ BLOBs
+    + Meta  
 
-#### SPAN - THE DATA TO SEARCH OVER
-These choices are the main choices over which information to search over.
-+ **schemaID:** SchemaID( standardvalue false) or/and **userID**:  UserID (standardvalue false)
-+ **DocumentMeta:** boolean - standardvalue false
-+ **DocumentData:** boolean - standardvalue false
-+ **BlobMeta:** boolean - standardvalue false
-
-So if you include both schemaID and userID the search will only include that users documents that relates to that Schema. If only a Schema is included the search will be done over all users documents correlates to that Schema. If only userID is included the search will be done over all Documents that user has. 
-
-#### OPTIONS - THE SETTINGS FOR YOUR SEARCH
-In options all the settings for the search is choosed. 
-+ **maxCountDocument:** number - The maximum count coverage of the query, if higher the search will not initiate. Standardvalue is 1000. 
-+ **maxSpanSize:** number (mb) The maximum size coverage of the query, if higher the search will not initiate. Standardvalue is 1 (mb).
-
-#### QUERY 
-This query is an jsonArray that can include these search terms: 
-+ **field:** The key you want to find 
-+ **Value** Below is two different options listed, **only one can be used in an element**
-    + **Value:**: The value of the above stated key
-    + **LowValue** && **HighValue**:  All values between these values. Can be numbers or string
-+ **case_sensetive:** If sensetive for large/small characters - Standardvalue is false
-+ **relation_to_next**: 'and'/'or'/'exclude', The relation to the next element in the JSONARRAY.   Stanardvalue is and
+The Schema is utilized automatically in all searches to prevent unnecessary decryptions. The different elements in a search is:  
++ Span - The data which the search should be made over
++ Layered Search
++ Query structure
 
 
-The JSON with the search request should be structured as the example below:
-```javasript
-{ span: {
-    schemaID: 'vadfafsmKFF9',
-    DocumentMeta: true,
-    DocumentData: true,
-    }
-    options: {
-    maxSizeSearch: 0.1
-    }
-      metaQuery: []
-      dataQuery: [] 
-      allQuery: [] 
-      queries:[
-        {
-            ‘field’: ‘hospital’,
-            ‘value’: ’Storsjukhuset’, 
-            ‘case_sensitive’: true,
-            'relation_to_next': 'and'
-        },
-        {
-            ‘field’:’disease’,
-            ‘value’:’Knäled’,
-            'relation_to_next': 'or'
-        },
-        {
-            ‘field’:’Physician’,
-            ‘lowValue’: 'Adam',
-            'highValue': 'Karl'
-            'relation_to_next': 'and'
-        },
-   	{
-            ‘field’:’age’,
-            ‘lowValue’: 6,
-	        ‘highValue’:15
-        }
-    ]
-```
+A search can be made over :
+##### A USERS OWN INFORMATION 
+#
 
 ```javascript
-'result': success, 
-'data': [{
-    'schemaID':
-    'documentID': 
-    'blobID': 
-    'userID':
+URL: BASE_URL +  '/users/' + :user + '/search/'
+Method: [POST]
+Content-Type: application/json 
+Authorization: <DeveloperID, UserToken>
+```
+
+##### ALL DOCUMETS OF A SCHEMA
+#
+This search should not be requested by users since this may require them to send sensitive information through your backend.  
+```javascript
+URL: BASE_URL +  '/schemas/' + :schema + '/doucmentSearch/'
+Method: [POST]
+Content-Type: application/json 
+Authorization: <DeveloperID, DeveloperToken>
+```
+
+##### ALL MEMBERS INFORMATION THAT IS LINKED TO A SPECIFIC GROUP
+#
+```javascript
+URL: BASE_URL +  'groups/' + :group + '/search'
+Method: [POST]
+Content-Type: application/json 
+Authorization: <DeveloperID, UserToken>
+```
+
+### SPAN
+In the Span it is possible to decrease the amount of data that the search should include. This is done by letting either of these attributes be false:
++ **documentMeta:** boolean - standardvalue false
++ **documentData:** boolean - standardvalue false
++ **blobMeta:** boolean - standardvalue false
+
+To prevent mistakes were huge dataset is searched over these attributes could be added.
++ **maxCountDataDocument:** number - The maximum nr of encrypted documents/blobs which will be decrypted. If higher the search will not initiate. Standardvalue is 1000. 
++ **maxSpanDataSize:** number (mb) The maximum amount of encrypted documents/blobs which will be decrypted. If higher the search will not initiate. Standardvalue is 1 (mb).
+
+#### QUERY 
+The query/queries search operators:
+```javasript
+$and: {a: 5}           // AND (a = 5)
+$or: [{a: 5}, {a: 6}]  // (a = 5 OR a = 6)
+$eq: 5,                 // id == 5
+$gt: 6,                // id > 6
+$gte: 6,               // id >= 6
+$lt: 10,               // id < 10
+$lte: 10,              // id <= 10
+$ne: 20,               // id != 20
+$between: [6, 10],     // BETWEEN 6 AND 10
+$notBetween: [11, 15], // NOT BETWEEN 11 AND 15
+$in: [1, 2],           // IN [1, 2]
+$notIn: [1, 2],        // NOT IN [1, 2]
+$like: '%hat',         // LIKE '%hat'
+$notLike: '%hat'       // NOT LIKE '%hat'
+$iLike: '%hat'         // ILIKE '%hat' (case insensitive)
+```
+
+Below is some examples on the query search combination/structure
+```javasript
+query: {
+  visitNr: {
+    $or: {
+      $lt: 20,
+      $eq: null
+    }
+  }
+}
+// rank < 20 OR rank IS NULL
+
+query: {
+  createdAt: {
+    $lt: Calendar.getTimeInMillis(),
+    $gt: Calendar.getTimeInMillis() - 24 * 60 * 60 * 1000
+  }
+}
+// createdAt < [time in milli ] AND createdAt > [time in milli]
+
+query: {
+  $or: [
+    {
+      disease: {
+        $like: 'Knee%'
+      }
+    },
+    {
+      Physician: {
+        $like: '%Carl G%'
+      }
+    }
+  ]
+}
+```
+
+
+#### LAYERED SEARCH APPROACH
+The Layered search approach is built to first go through the meta and identify which Documents that fulfills specific criterias. Only these Documents is then decrypted and searched. For a Blob to be included in the answer its parent Document data needs to fulfill the criterias set in the encrypted data layer. 
+
+Another layer that is possible to add and usefull when searching over several Schemas is the schemaQuery. This will go through the Schema and exclude all of the Documents with a Schema that does not include the right keys.
+
+A finished search body can in the end look like and should be structured as the example below:
+**body**
+```javasript
+{ 
+      span: {
+        DocumentMeta: true,
+        DocumentData: true,
+        maxSizeDataSearch: 0.1
+        },
+      metaQuery: {
+        hospital: 'Storsjukhuset',
+        physician: 'Adam Torkelsson'
+        },
+      dataQuery: {
+        hospital: 'Storsjukhuset',
+        disease: 'Knäled',
+        $or: [
+            {Physician: { $like: '%Adam T%'}},
+            {age: 25}
+            ]
+        }
+    }
+```
+
+**Answer**
+```javascript
+result: 'success', 
+data: [{
+    schemaID: 'vakaa'
+    documentID: 'favajk'
+    blobID: null
+    userID: 'vmaafl'
 },
-{}
+{
+    schemaID: 'vvmkaE',
+    documentID: 'caavWH',
+    blobID: 'cAWJN',
+    userID: 'ASNh'
+}
 ]
+```
+
+##### META LAYER
+By adding a meta query you can further on limit the amount of searches required to be done over encrypted information. This query is only runned over the meta stored in Documents and BLOBs. After this layer the search span will only consist of information which correlates to this data. The metaQuery is structured as seen below: 
+```javasript
+ metaQuery: {
+    hospital: 'Storsjukhuset',
+    physician: 'Adam Torkelsson'
+    }
+```
+
+##### THE ENCRYPTED DATA LAYER
+The encrypted data layer is the criteria set for the data within the Document. This is set by adding a dataQuery structured as seen below:
+
+```javasript
+ dataQuery: {
+            hospital: 'Storsjukhuset',
+            disease: 'Knäled',
+            $or: [
+                {Physician: { $like: '%Adam T%'}},
+                {age: 25}
+                ]
+            ]
+            
+        }
+    }
 ```
