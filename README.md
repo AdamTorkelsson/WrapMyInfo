@@ -43,16 +43,8 @@ To get up and running fast, use https://www.vagrantup.com
 This will be further developed as the software functionality grows! 
 
 ## Overview 
-Architecture Overview Image - Coming soon
+![alt tag]http://wrapmyinfo.com/images/Databas%20Struktur.png
 
-The main resources of this backend is the Schema, Document, Blob, Users and Groups. You decide how the data should be stored within your Documents using Schemas, this includes how the data should be structured, what it should consist of and if the Documents shall have Blobs (large files) or not.  
-
-**Hospital visit example:** 
-Define a Schema (step 1) after what shall be included in a hospital visit. Then, Create a Document (step 2) after that Schema and start to store a users information within it (step 3). As a hospital visit may include large emr pictures you have defined your hospital visit Schema to make the Document have several Blob "children" in which you easily can store these pictures. This design has been chosen to make it possible for the backend to verify and maintain the database for you while being dynamic and possible to use for many different types of softwares.  Documents and Blobs does as well have meta data stored to help you identify them. 
-
-Primarly this software is built to work together with your own backend and not on its own. It is built in a way that we hope enable as many as possible to be able to integrate with it and gain value from it. The things your own backend needs to take care of is if you have more than one type of user and these users needs to gain access to each others information. This is done with groups but the functionality needs your backend to verify which users should be permitted to become owners of groups. You moreover need a backend to handle login and update tokens and you need to distribute the tokens to the right user. You should therefor, in your own backend, store the developerID, developerKey and all your users unique UserID. It is however important to never transfer user sensetive information through your own backend since this would require you to keep as a high security level on your own backend.   
-
-## OVERVIEW 
 As seen in the image the main resources is the Schema, Document, Blob, Users and Groups. 
 * A Schema contains the structure of the document data. It is used to verify data and maintain consistency in the stored information.
 * A Document consist of information that is stored as data(encrypted) and meta(not encrypted). 
