@@ -43,7 +43,7 @@ To get up and running fast, use https://www.vagrantup.com
 This will be further developed as the software functionality grows! 
 
 ## Overview 
-![alt tag]http://wrapmyinfo.com/images/Databas%20Struktur.png
+![API](http://i60.tinypic.com/317b14g.png)
 
 As seen in the image the main resources is the Schema, Document, Blob, Users and Groups. 
 * A Schema contains the structure of the document data. It is used to verify data and maintain consistency in the stored information.
