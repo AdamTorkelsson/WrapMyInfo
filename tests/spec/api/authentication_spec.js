@@ -1,9 +1,12 @@
 require('dotenv').load();
+var sprintf = require("sprintf-js").sprintf;
 var seedResults = require('../../../config/seed-results.json');
 var frisby = require('frisby');
 
 var url = 'http://' + process.env.APP_HOST;
 var port = process.env.APP_PORT;
+
+var validDeveloperId = '07800278-c4e0-497b-b61c-f77070e5f35a';
 
 var validDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV%';
 var invalidDeveloperKey = '2jDuJfhj6h27rrQ6JLg%2BHOFbSxkARBN6VO8A%2BDV';
@@ -40,7 +43,7 @@ frisby.create('POST /auth/developer Get a DeveloperToken, should fail')
 
 frisby.create('POST /auth/user Get a UserToken, should succeed')
     .addHeaders({
-        Authorization: validDeveloperToken
+        Authorization: sprintf('%s:%s', validDeveloperId, validDeveloperToken)
     })
     .post(url + ':' + port + '/auth/user', {
         id: seedResults.UserId
@@ -55,7 +58,7 @@ frisby.create('POST /auth/user Get a UserToken, should succeed')
 
 frisby.create('POST /auth/user Get a UserToken, should fail')
     .addHeaders({
-        Authorization: invalidDeveloperToken
+        Authorization: sprintf('%s:%s', validDeveloperId, invalidDeveloperToken)
     })
     .post(url + ':' + port + '/auth/user', {
         id: seedResults.DeveloperId
@@ -71,7 +74,7 @@ frisby.create('POST /auth/user Get a UserToken, should fail')
 
 frisby.create('GET /auth/status Check if DeveloperToken is valid, should be valid')
     .addHeaders({
-        Authorization: validDeveloperToken
+        Authorization: sprintf('%s:%s', validDeveloperId, validDeveloperToken)
     })
     .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
@@ -85,7 +88,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be vali
 
 frisby.create('GET /auth/status Check if DeveloperToken is valid, should be invalid')
     .addHeaders({
-        Authorization: invalidDeveloperToken
+        Authorization: sprintf('%s:%s', validDeveloperId, invalidDeveloperToken)
     })
     .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
@@ -98,7 +101,7 @@ frisby.create('GET /auth/status Check if DeveloperToken is valid, should be inva
 
 frisby.create('GET /auth/status Check if UserToken is valid, should be valid')
     .addHeaders({
-        Authorization: validUserToken
+        Authorization: sprintf('%s:%s', seedResults.UserId, seedResults.UserToken)
     })
     .get(url + ':' + port + '/auth/status')
     .expectStatus(200)
@@ -112,7 +115,7 @@ frisby.create('GET /auth/status Check if UserToken is valid, should be valid')
 
 frisby.create('GET /auth/status Check if UserToken is valid, should be invalid')
     .addHeaders({
-        Authorization: invalidUserToken
+        Authorization: sprintf('%s:%s', seedResults.UserId, invalidUserToken)
     })
     .get(url + ':' + port + '/auth/status')
     .expectStatus(200)

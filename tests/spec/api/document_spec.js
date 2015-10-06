@@ -64,7 +64,7 @@ var invalidDocument = {
  */
 frisby.create('POST /users/:user/schemas/:schema/documents Create valid Document')
     .addHeaders({
-        Authorization: developerToken
+        Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
     })
     .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), validDocument1, {json: true})
     .expectStatus(200)
@@ -97,7 +97,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create valid Document
  */
 frisby.create('POST /users/:user/schemas/:schema/documents Create 2nd valid Document')
     .addHeaders({
-        Authorization: developerToken
+        Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
     })
     .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), validDocument2, {json: true})
     .expectStatus(200)
@@ -130,7 +130,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create 2nd valid Docu
  */
 frisby.create('POST /users/:user/schemas/:schema/documents Create invalid Document')
     .addHeaders({
-        Authorization: developerToken
+        Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
     })
     .post(sprintf('%s:%s/users/%s/schemas/%s/documents', url, port, seedResults.UserId, seedResults.SchemaId), invalidDocument, {json: true})
     .expectStatus(200)
@@ -144,7 +144,7 @@ frisby.create('POST /users/:user/schemas/:schema/documents Create invalid Docume
 var frisbyUpdateDocumentSuccessfully = function(json){
     frisby.create('PUT /users/:user/schemas/:schema/documents/:document Update Document, attempt should succeed')
         .addHeaders({
-            Authorization: developerToken
+            Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
         })
         .put(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id, validDocument2, {json: true})
         .expectStatus(200)
@@ -176,7 +176,7 @@ var frisbyUpdateDocumentSuccessfully = function(json){
 var frisbyUpdateDocumentFailed = function(json){
     frisby.create('PUT /users/:user/schemas/:schema/documents/:document Update Document, attempt should fail')
         .addHeaders({
-            Authorization: developerToken
+            Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
         })
         .put(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id, invalidDocument, {json: true})
         .expectStatus(200)
@@ -191,7 +191,7 @@ var frisbyUpdateDocumentFailed = function(json){
 var frisbyFetchDocument = function(json){
     frisby.create('GET /users/:user/schemas/:schema/documents/:document Fetch Document')
         .addHeaders({
-            Authorization: developerToken
+            Authorization: sprintf('%s:%s', seedResults.DeveloperId, seedResults.DeveloperToken)
         })
         .get(sprintf('%s:%s/users/%s/schemas/%s/documents/', url, port, seedResults.UserId, seedResults.SchemaId) + json.id)
         .expectStatus(200)
