@@ -3,12 +3,21 @@ var wmiCrypto = require('../utils/wmi-crypto');
 var moment = require('moment');
 
 module.exports = function(req, res, next){
+    var developerId, token;
+
     var tokenEarliestCreationTime = moment().subtract(14, 'days').format(); // Max age in seconds, set to 14 days
-    var token = req.get('Authorization');
-    if(token){
+    var authorization = req.get('Authorization');
+    if(authorization){
+        var parts = authorization.split(':');
+        developerId = parts[0];
+        token = parts[1];
+    }
+
+    if(developerId && token){
         models.DeveloperToken.findOne({
             where: {
                 token: wmiCrypto.createTokenHash(token),
+                DeveloperId: developerId,
                 createdAt: {
                     gt: tokenEarliestCreationTime
                 }
@@ -37,11 +46,17 @@ module.exports = function(req, res, next){
                     ]
                 }).then(function(userToken){
                     if(userToken){
-                        req.authenticated = {
-                            type: "user",
-                            entity: userToken.User
-                        };
+                        // Valid userToken received. Does it belong to the claimed Developer (via User)?
+                        if(userToken.User.Developer.id === developerId){
+                            req.authenticated = {
+                                type: "user",
+                                entity: userToken.User
+                            };
+                        }else{
+                            req.authenticated = false;
+                        }
                         next();
+
                     }else{
                         req.authenticated = false;
                         next();
