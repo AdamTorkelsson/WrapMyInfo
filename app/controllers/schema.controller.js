@@ -13,7 +13,7 @@ schemaController.getSchemas = function(req, res){
     });
 };
 
-schemaController.postSchemas = function(req, res){
+schemaController.postSchema = function(req, res){
     var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
     models.Schema.create({
         name: req.body.name,
@@ -44,22 +44,48 @@ schemaController.getSchema = function(req, res){
 
 schemaController.putSchema = function(req, res){
     var developer = req.authenticated.type === 'developer' ? req.authenticated.entity : req.authenticated.entity.Developer;
-    models.Group.findOne({
+
+    var developer;
+    var user;
+    if(req.authenticated.type === "developer"){
+        developer = req.authenticated.entity;
+    }else{
+        user = req.authenticated.entity;
+    }
+
+    models.Schema.findOne({
         where: {
-            id:req.params.group,
-            DeveloperId: developer.id
+            id: req.params.schema,
+            DeveloperId: (developer ? developer.id : user.Developer.id)
         }
+    }).then(function(schema){
+        if(schema) {
 
-    }).then(function(group){
-        if(group){
-            group.name = req.body.name;
-            group.save().then(function(savedGroup){
-                res.json(savedGroup);
-            });
-        }else{
-            res.status(response.error.notFound(req).httpCode).json(response.error.notFound(req));
+            // Perform changes and additions to Schema.dataRules
+            for (var rule in req.body.dataRules) {
+                if (req.body.dataRules.hasOwnProperty(rule)) {
+
+                    // Incorporate rule changes
+                    document.dataRules[rule] = req.body.dataRules[rule];
+
+                    // Change rulename
+                    if (req.body.dataRules[rule].oldKey && req.body.dataRules[rule].newKey && typeof req.body.dataRules[rule].oldKey == "string" && typeof req.body.dataRules[rule].newKey == "string") {
+                        schema.dataRules[req.body.dataRules[rule].newKey] = schema.dataRules[rule]; // Create the new
+                        delete schema.dataRules[rule]; // Delete the old one
+                    }
+
+                    // Change properties for this rule
+
+                    // Delete rule
+                    if (req.body.dataRules[rule].delete && req.body.dataRules[rule].delete == true) {
+                        delete schema.dataRules[rule];
+                    }
+                }
+            }
+            //TODO: Handle changes to name, maxBlobs and maxBlobSize,
+
+            //TODO: Save Schema
         }
-
     });
 };
 

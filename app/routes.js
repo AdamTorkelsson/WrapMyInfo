@@ -3,6 +3,7 @@ var authorize = require("./middlewares/authorize");
 
 // Controllers
 var userController = require("./controllers/user.controller");
+var documentController = require("./controllers/document.controller");
 var authController = require("./controllers/auth.controller");
 var groupController = require("./controllers/group.controller");
 var schemaController = require("./controllers/schema.controller");
@@ -16,20 +17,6 @@ router.post('/users', authorize.minDeveloper, userController.postUser); // Creat
 
 router.get('/users/:user/schemas', authorize.minUserOnSelf, userController.getSchemas); // Get all Schemas connected to a User via Document
 
-router.get('/users/:user/schemas/:schema/documents', authorize.minUserOnOwnedUser, userController.getDocuments); // Get Users Documents tied to a specific Schema
-router.post('/users/:user/schemas/:schema/documents', authorize.minUserOnOwnedUser, userController.postDocument); // Create new Document tied to specified User and Schema
-
-router.get('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, userController.getDocument); // Get Document
-router.put('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, userController.putDocument); // Update Document
-router.delete('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, userController.deleteDocument); // Delete Document TODO: along with all Blobs
-
-router.get('/users/:user/schemas/:schema/documents/:document/blobs', authorize.minUserOnOwnedUser, userController.getBlobs); // Get all Blobs tied to specified Document
-router.post('/users/:user/schemas/:schema/documents/:document/blobs', authorize.minUserOnOwnedUser, userController.postBlob); // Create new Blob tied to specified Document
-
-router.get('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, userController.getBlob);
-router.put('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, userController.putBlob);
-router.delete('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, userController.deleteBlob);
-
 router.get('/users/:user/ownergroups/', authorize.minUserOnSelf, userController.getOwnerGroups);
 router.post('/users/:user/ownergroups/', authorize.minDeveloper, userController.postOwnerGroups);
 
@@ -39,6 +26,23 @@ router.get('/users/:user/membergroups/', authorize.minUserOnOwnedUser, userContr
 router.post('/users/:user/membergroups/', authorize.minUserOnSelf, userController.postMemberGroups);
 
 router.delete('/users/:user/membergroups/:group', authorize.minUserOnSelf, userController.deleteMemberGroup);
+
+
+// Document Controller
+
+router.get('/users/:user/schemas/:schema/documents', authorize.minUserOnOwnedUser, documentController.getDocuments); // Get Users Documents tied to a specific Schema
+router.post('/users/:user/schemas/:schema/documents', authorize.minUserOnOwnedUser, documentController.postDocument); // Create new Document tied to specified User and Schema
+
+router.get('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, documentController.getDocument); // Get Document
+router.put('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, documentController.putDocument); // Update Document
+router.delete('/users/:user/schemas/:schema/documents/:document', authorize.minUserOnOwnedUser, documentController.deleteDocument); // Delete Document TODO: along with all Blobs
+
+router.get('/users/:user/schemas/:schema/documents/:document/blobs', authorize.minUserOnOwnedUser, documentController.getBlobs); // Get all Blobs tied to specified Document
+router.post('/users/:user/schemas/:schema/documents/:document/blobs', authorize.minUserOnOwnedUser, documentController.postBlob); // Create new Blob tied to specified Document
+
+router.get('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, documentController.getBlob);
+router.put('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, documentController.putBlob);
+router.delete('/users/:user/schemas/:schema/documents/:document/blobs/:blob', authorize.minUserOnOwnedUser, documentController.deleteBlob);
 
 
 // Group Controller
@@ -64,7 +68,7 @@ router.delete('/groups/:group/owners/:user', authorize.minDeveloper, groupContro
 // Schema Controller
 
 router.get('/schemas', authorize.minDeveloper, schemaController.getSchemas);
-router.post('/schemas', authorize.minDeveloper, schemaController.postSchemas);
+router.post('/schemas', authorize.minDeveloper, schemaController.postSchema);
 
 router.get('/schemas/:schema', authorize.minDeveloper, schemaController.getSchema);
 router.put('/schemas/:schema', authorize.minDeveloper, schemaController.putSchema);
