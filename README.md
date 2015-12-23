@@ -1,16 +1,3 @@
----
-
-
-                                        
-                                         ### Still in development ###
-                                         
-This API is still heavily under development and therefore much will change during the development. Use this versions more to see if it is something that could interest you as a developer to use or contribute to.
-
-                                              
-
----
-
-
 # WrapMyInfo
 
 A software project supported by Internetfonden.
